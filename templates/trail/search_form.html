@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<div class="search-bg">
+    <div class="form-accent container p-2">
+        <div id="trail-form" class="container text-center py-4 px-5">
+            <h1>Search for a Trail</h1>
+
+            <form method="POST">
+                <div class="row">
+                    {{ form.hidden_tag() }}
+
+                    {% for field in form
+               if field.widget.input_type != 'hidden' %}
+                    <div class="col">
+                        <p>
+                            {{ field.label }}
+                            {{ field(class_='form-control') }}
+
+                            {% for error in field.errors %}
+                            <span class="form-text text-danger">{{ error }}</span>
+                            {% endfor %}
+                        </p>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <button class="btn btn-lg btn-info" type="submit">Search</button>
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock %}
