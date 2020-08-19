@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}results{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div id="search-results">
+        <h1>Showing Trails {{radius}} miles from {{city}}</h1>
+
+
+
+        <div class="list-group">
+            {% for result in results %}
+            <div class="testing1">
+                <a href="#" class="list-group-item list-group-item-action testing1">
+                    <div class="d-flex w-100 justify-content-between">
+                        <img src="{{result['imgSqSmall']}}" class="rounded" alt="...">
+                        <h5 class="mb-1">{{result['name']}}</h5>
+                        <small>{{result['difficulty']}}</small>
+                    </div>
+                    <p class="mb-1">{{result['summary']}}</p>
+                    <small>Rating: {{result['stars']}} out of 5 </small>
+                    <p class="testing hidden">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Illum inventore
+                        dignissimos corporis
+                        nihil iste ab saepe, et facilis dicta. Dignissimos impedit quos sunt ut consectetur consequuntur
+                        facere libero maiores quam.</p>
+                </a>
+            </div>
+            {% endfor %}
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,93 @@
+import requests
+from uszipcode import SearchEngine
+
+MQAPI_BASE_URL = 'http://www.mapquestapi.com/geocoding/v1/'
+HPAPI_BASE_URL = 'https://www.hikingproject.com/data'
+
+
+# *****************************
+# US ZIPCODE FUNCTIONS
+# *****************************
+
+
+def get_geo_info(zip_code):
+    """ Using uszipcode package, get geographical info of a user-inputted
+    zipcode. Return a dictionary of that information"""
+
+    search = SearchEngine(simple_zipcode=True)
+    geo_info = search.by_zipcode(f"{zip_code}")
+    geo_info_dict = geo_info.to_dict()
+
+    return geo_info_dict
+
+
+# *****************************
+# MAPQUEST API FUNCTIONS:
+# *****************************
+
+
+def TEMPORARY(key, zip_code):
+    """ Using Zip Code, get some geographical info info """
+    response = requests.get(f"{MQAPI_BASE_URL}/address",
+                            params={'key': key, 'location': zip_code})
+
+    data = response.json()
+    lat = data['results'][0]['locations'][0]['latLng']['lat']
+    lon = data['results'][0]['locations'][0]['latLng']['lng']
+    city = data['results'][0]['locations'][0]['adminArea5']
+
+    results = {
+        'lat': lat,
+        'lon': lon,
+        'city': city
+    }
+
+    return results
+
+
+# *****************************
+# HIKING PROJECT API FUNCTIONS:
+# *****************************
+
+
+def search_for_trails(key, lat, lon, radius=None):
+    """ Use Hiking Project API to get a list of trails based
+    on user search parameters """
+
+    if radius:
+        params = {'key': key, 'lat': lat, 'lon': lon, 'sort': 'quality',
+                  'maxResults': 500, 'maxDistance': radius}
+    else:
+        params = {'key': key, 'lat': lat, 'lon': lon,
+                  'sort': 'quality', 'maxResults': 500}
+
+    response = requests.get(f"{HPAPI_BASE_URL}/get-trails",
+                            params=params)
+
+    data = response.json()
+    results = data['trails']
+    return results
+
+
+def get_trail(key, id):
+    """ Use Hiking Project API to get get trail info by id """
+
+    response = requests.get(f"{HPAPI_BASE_URL}/get-trails-by-id",
+                            params={'key': key, 'ids': id})
+
+    data = response.json()
+    result = data['trails'][0]
+
+    return result
+
+
+def get_conditions(key, id):
+    """ Use Hiking Project API to get today's trail conditions  """
+
+    response = requests.get(f"{HPAPI_BASE_URL}/get-conditions",
+                            params={'key': key, 'ids': id})
+
+    data = response.json()
+    result = data[0]
+
+    return result
