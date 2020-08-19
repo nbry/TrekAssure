@@ -6,7 +6,7 @@ from flask_debugtoolbar import DebugToolbarExtension
 from forms import TrailSearchForm
 from models import db, connect_db
 from secrets import m_key, h_key
-from functions import search_for_trails, get_trail, get_conditions, get_geo_info
+from functions import search_for_trails, get_trail, get_conditions, get_geo_info, rate_difficulty
 
 
 app = Flask(__name__)
@@ -49,6 +49,10 @@ def search_trail_form():
             geo_info['lng'],
             radius
         )
+
+        
+        for trail in results:
+            trail['difficulty'] = rate_difficulty(trail['difficulty'])
 
         return render_template("/trail/search_results.html",
                                results=results,

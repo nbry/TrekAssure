@@ -91,3 +91,16 @@ def get_conditions(key, id):
     result = data[0]
 
     return result
+
+
+def rate_difficulty(color):
+    """ Hiking Project API returns difficulty as a color. Translate the
+    color to a tangible difficulty rating """
+    colors = ['green', 'greenBlue', 'blue', 'blueBlack', 'black', 'dblack', 'missing']
+
+    ratings = [('Easy', 'No obstacles. Flat.'), ('Easy/Intermediate', 'Mostly flat and even.'), ('Intermediate', 'Uneven Terrain. Small hills'),
+               ('Intermediate/Difficult', 'Steep sections, rocks, roots'), ('Difficult', 'Tricky terrain. Steep. Not for beginners'), ('Very Difficult', 'Hazardous. Very steep. Experts only'), (None, None)]
+    
+    index = colors.index(color)
+
+    return ratings[index]
