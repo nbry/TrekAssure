@@ -6,7 +6,9 @@ from flask_debugtoolbar import DebugToolbarExtension
 from forms import TrailSearchForm, SecureHikeForm
 from models import db, connect_db
 from secrets import m_key, h_key
-from functions import search_for_trails, get_trail, get_conditions, get_geo_info, rate_difficulty, get_route_home
+from functions import (search_for_trails, get_trail, get_conditions,
+                       get_geo_info, rate_difficulty, get_directions, search_for_nearest,
+                       secure_trip)
 
 
 app = Flask(__name__)
@@ -30,6 +32,10 @@ connect_db(app)
 def home_page():
     """ Show Home Page """
     return render_template("extends.html")
+
+# *****************************
+# "TRAIL" RELATED ROUTES
+# *****************************
 
 
 @app.route('/trails/search', methods=['GET', 'POST'])
@@ -69,13 +75,12 @@ def secure_hike(trail_id):
     #     return redirect('/')
 
     if form.validate_on_submit():
-        starting_address = form.starting_address.data
-
+        home_address = form.home_address.data
         trail = get_trail(h_key, trail_id)
-        trail_coords = f"{trail['latitude']}, {trail['longitude']}"
 
-        route = get_route_home(m_key, starting_address, trail_coords)
+        secured_trip = secure_trip(m_key, trail, home_address)
 
-        return render_template('/trail/secure_results.html', route=route)
+        return render_template('/trail/secure_results.html', secured_trip=secured_trip, trail=trail)
 
-    return render_template('/trail/secure_form.html', form=form, trail_id=trail_id)
+    else:
+        return render_template('/trail/secure_form.html', form=form, trail_id=trail_id)

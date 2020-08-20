@@ -4,21 +4,42 @@
 
 {% block content %}
 <div class="container">
-    <h1>Testing!</h1>
+    <h1>The Journey Back Home from {{trail['name']}}</h1>
 
-    <h5>Directions Home</h5>
+    <h4>Directions Home: </h4>
+    <p><b>{{secured_trip['home']['info']}}</b>
+        ({{secured_trip['home']['route']['route_info']['distance']}} miles away)</p>
+
     <ol>
-        {% for direction in route %}
-        <li> {{ direction['narrative']}} </li>
+        {% for direction in secured_trip['home']['route']['directions'] %}
+        <li>{{ direction['narrative'] }}
+            <div>
+                <small class="text-muted">({{direction['distance']}} miles)</small>
+            </div>
+        </li>
         {% endfor %}
     </ol>
 
-    <h5>Directions to Nearest: </h5>
+    {% for destination in secured_trip %}
+    {% if destination != 'home' %}
 
-    <h3>Gas Station</h3>
-    <h3>Pharmacy</h3>
-    <h3>Hostpital</h3>
-    <h3>Police Station</h3>
+    <h4>Directions to nearest {{destination}}: </h4>
+
+    <p><b>{{secured_trip[destination]['info']['name']}}</b>
+        ({{secured_trip[destination]['route']['route_info']['distance']}} miles away)</p>
+
+    <ol>
+        {% for direction in secured_trip[destination]['route']['directions'] %}
+        <li>{{ direction['narrative'] }}
+            <div>
+                <small class="text-muted">({{direction['distance']}} miles)</small>
+            </div>
+        </li>
+        {% endfor %}
+    </ol>
+
+    {% endif %}
+    {%endfor %}
 
 
 </div>

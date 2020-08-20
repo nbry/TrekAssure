@@ -16,8 +16,8 @@ class TrailSearchForm(FlaskForm):
 class SecureHikeForm(FlaskForm):
     """ Requests user address and preferences for hiking pamphlet """
 
-    starting_address = StringField(
-        'Starting Address', validators=[InputRequired()])
+    home_address = StringField(
+        'Home Address', validators=[InputRequired()])
     # hospital = BooleanField('hospital')
     # gas_station = BooleanField('gas station')
     # pharmacy = BooleanField('pharmacy')
