@@ -1,7 +1,7 @@
 import requests
 from uszipcode import SearchEngine
 
-MQAPI_BASE_URL = 'http://www.mapquestapi.com/geocoding/v1/'
+MQAPI_BASE_URL = 'http://www.mapquestapi.com'
 HPAPI_BASE_URL = 'https://www.hikingproject.com/data'
 
 
@@ -25,10 +25,21 @@ def get_geo_info(zip_code):
 # MAPQUEST API FUNCTIONS:
 # *****************************
 
+def get_route_home(key, to_address, from_address):
+    """ Using user inputted address, get routing directions using """
+
+    response = requests.get(f"{MQAPI_BASE_URL}/directions/v2/route",
+                            params={'key': key, 'to': to_address, 'from': from_address})
+
+    data = response.json()
+    directions = data['route']['legs'][0]['maneuvers']
+
+    return directions
+
 
 def TEMPORARY(key, zip_code):
     """ Using Zip Code, get some geographical info info """
-    response = requests.get(f"{MQAPI_BASE_URL}/address",
+    response = requests.get(f"{MQAPI_BASE_URL}/geocoding/v1/address",
                             params={'key': key, 'location': zip_code})
 
     data = response.json()
@@ -65,8 +76,8 @@ def search_for_trails(key, lat, lon, radius=None):
                             params=params)
 
     data = response.json()
-    results = data['trails']
-    return results
+    trails_info = data['trails']
+    return trails_info
 
 
 def get_trail(key, id):
@@ -76,9 +87,9 @@ def get_trail(key, id):
                             params={'key': key, 'ids': id})
 
     data = response.json()
-    result = data['trails'][0]
+    trail_info = data['trails'][0]
 
-    return result
+    return trail_info
 
 
 def get_conditions(key, id):
@@ -96,11 +107,13 @@ def get_conditions(key, id):
 def rate_difficulty(color):
     """ Hiking Project API returns difficulty as a color. Translate the
     color to a tangible difficulty rating """
-    colors = ['green', 'greenBlue', 'blue', 'blueBlack', 'black', 'dblack', 'missing']
+
+    colors = ['green', 'greenBlue', 'blue',
+              'blueBlack', 'black', 'dblack', 'missing']
 
     ratings = [('Easy', 'No obstacles. Flat.'), ('Easy/Intermediate', 'Mostly flat and even.'), ('Intermediate', 'Uneven Terrain. Small hills'),
                ('Intermediate/Difficult', 'Steep sections, rocks, roots'), ('Difficult', 'Tricky terrain. Steep. Not for beginners'), ('Very Difficult', 'Hazardous. Very steep. Experts only'), (None, None)]
-    
+
     index = colors.index(color)
 
     return ratings[index]

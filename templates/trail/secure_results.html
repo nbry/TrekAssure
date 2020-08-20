@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}Your TrekAssure Pamphlet{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Testing!</h1>
+
+    <h5>Directions Home</h5>
+    <ol>
+        {% for direction in route %}
+        <li> {{ direction['narrative']}} </li>
+        {% endfor %}
+    </ol>
+
+    <h5>Directions to Nearest: </h5>
+
+    <h3>Gas Station</h3>
+    <h3>Pharmacy</h3>
+    <h3>Hostpital</h3>
+    <h3>Police Station</h3>
+
+
+</div>
+
+
+{% endblock %}

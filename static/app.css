@@ -2,6 +2,10 @@ body {
     background-color: rgba(89, 150, 92, 0.74);
 }
 
+.container {
+    background: white;
+}
+
 /* SEARCH PAGE STYLING */
 
 /* ***************************** */
@@ -35,7 +39,3 @@ body {
 /* SEARCH RESULTS */
 
 /* ***************************** */
-
-#search-results {
-    background: white;
-}

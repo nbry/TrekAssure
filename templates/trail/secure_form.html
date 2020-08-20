@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Secure Hike{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>SECURE</h1>
+
+    <form method="POST">
+
+        {{ form.hidden_tag() }}
+
+        {% for field in form
+       if field.widget.input_type != 'hidden' %}
+
+        <div class="form-group">
+            <p>
+                {{ field.label }}
+                {{ field(class_='form-control') }}
+
+                {% for error in field.errors %}
+                <span class="form-text text-danger">{{ error }}</span>
+                {% endfor %}
+            </p>
+        </div>
+
+        {% endfor %}
+        <button type="submit">Submit</button>
+    </form>
+
+
+</div>
+
+
+{% endblock %}

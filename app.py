@@ -1,16 +1,16 @@
 import os
 import requests
-from flask import Flask, render_template
+from flask import Flask, render_template, redirect
 from flask_debugtoolbar import DebugToolbarExtension
 
-from forms import TrailSearchForm
+from forms import TrailSearchForm, SecureHikeForm
 from models import db, connect_db
 from secrets import m_key, h_key
-from functions import search_for_trails, get_trail, get_conditions, get_geo_info, rate_difficulty
+from functions import search_for_trails, get_trail, get_conditions, get_geo_info, rate_difficulty, get_route_home
 
 
 app = Flask(__name__)
-MQAPI_BASE_URL = 'http://www.mapquestapi.com/geocoding/v1/'
+MQAPI_BASE_URL = 'http://www.mapquestapi.com/'
 HPAPI_BASE_URL = 'https://www.hikingproject.com/data'
 
 app.config['SQLALCHEMY_DATABASE_URI'] = (
@@ -43,14 +43,9 @@ def search_trail_form():
         radius = form.radius.data
         geo_info = get_geo_info(zip_code)
 
-        results = search_for_trails(
-            h_key,
-            geo_info['lat'],
-            geo_info['lng'],
-            radius
-        )
+        results = search_for_trails(h_key, geo_info['lat'],
+                                    geo_info['lng'], radius)
 
-        
         for trail in results:
             trail['difficulty'] = rate_difficulty(trail['difficulty'])
 
@@ -58,5 +53,29 @@ def search_trail_form():
                                results=results,
                                radius=radius,
                                city=geo_info['major_city'])
+    else:
+        return render_template("/trail/search_form.html", form=form)
 
-    return render_template("/trail/search_form.html", form=form)
+
+@app.route('/trails/<int:trail_id>/secure', methods=['GET', 'POST'])
+def secure_hike(trail_id):
+    """ Render page that shows a form to sign in, or continue as guest.
+    As a guest, user can input starting address and preferences to request info.
+    Signed in Users will get results based on their preferences """
+
+    form = SecureHikeForm()
+    # WORK IN PROGRESS BELOW:
+    # if session['CURR_USER']:
+    #     return redirect('/')
+
+    if form.validate_on_submit():
+        starting_address = form.starting_address.data
+
+        trail = get_trail(h_key, trail_id)
+        trail_coords = f"{trail['latitude']}, {trail['longitude']}"
+
+        route = get_route_home(m_key, starting_address, trail_coords)
+
+        return render_template('/trail/secure_results.html', route=route)
+
+    return render_template('/trail/secure_form.html', form=form, trail_id=trail_id)
