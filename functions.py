@@ -24,7 +24,7 @@ def get_geo_info(zip_code):
 # *****************************
 # MAPQUEST API FUNCTIONS:
 # *****************************
-categories = ['gas station', 'pharmacy', 'hospital', 'police']
+categories = ['Gas Station', 'Pharmacy', 'Hospital', 'Police Station']
 
 
 def secure_trip(key, trail, to_address):

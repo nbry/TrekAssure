@@ -6,42 +6,68 @@
 <div class="container">
     <h1>The Journey Back Home from {{trail['name']}}</h1>
 
-    <h4>Directions Home: </h4>
-    <p><b>{{secured_trip['home']['info']}}</b>
-        ({{secured_trip['home']['route']['route_info']['distance']}} miles away)</p>
+    <div class="row">
 
-    <ol>
-        {% for direction in secured_trip['home']['route']['directions'] %}
-        <li>{{ direction['narrative'] }}
-            <div>
-                <small class="text-muted">({{direction['distance']}} miles)</small>
+        <div class="col-4">
+            <!-- Link to directions home -->
+            <div class="list-group" id="list-tab" role="tablist">
+                <a class="list-group-item list-group-item-action active" id="directions-home" data-toggle="list"
+                    href="#list-home-directions" role="tab" aria-controls="home">Home</a>
+            
+            <!-- Links to directions to Destinations -->
+                {% for destination in secured_trip %}
+                {% if destination != 'home' %}
+                <a class="list-group-item list-group-item-action" id="directions-{{destination.replace(' ', '')}}"
+                    data-toggle="list" href="#list-{{destination.replace(' ', '')}}-directions" role="tab"
+                    aria-controls="{{destination.replace(' ', '')}}">Nearest {{destination}}</a>
+                {% endif %}
+                {%endfor %}
             </div>
-        </li>
-        {% endfor %}
-    </ol>
+        </div>
 
-    {% for destination in secured_trip %}
-    {% if destination != 'home' %}
+        <div class="col-8">
+            <div class="tab-content" id="nav-tabContent">
 
-    <h4>Directions to nearest {{destination}}: </h4>
+                <!-- List of directions home -->
+                <div class="tab-pane fade show active" id="list-home-directions" role="tabpanel"
+                    aria-labelledby="directions-home">
+                    <p>Directions to <b>{{secured_trip['home']['info']}}</b>
+                        ({{secured_trip['home']['route']['route_info']['distance']}} miles away)</p>
+                    <ol>
+                        {% for direction in secured_trip['home']['route']['directions'] %}
+                        <li>{{ direction['narrative'] }}
+                            <div>
+                                <small class="text-muted">({{direction['distance']}} miles)</small>
+                            </div>
+                        </li>
+                        {% endfor %}
+                    </ol>
+                </div>
 
-    <p><b>{{secured_trip[destination]['info']['name']}}</b>
-        ({{secured_trip[destination]['route']['route_info']['distance']}} miles away)</p>
+                <!-- List of directions to destinations -->
+                {% for destination in secured_trip %}
+                {% if destination != 'home' %}
+                <div class="tab-pane fade" id="list-{{destination.replace(' ', '')}}-directions" role="tabpanel"
+                    aria-labelledby="directions-{{destination.replace(' ', '')}}">
+                    <p>Directions to <b>{{secured_trip[destination]['info']['name']}}</b>
+                        ({{secured_trip[destination]['route']['route_info']['distance']}} miles away)</p>
 
-    <ol>
-        {% for direction in secured_trip[destination]['route']['directions'] %}
-        <li>{{ direction['narrative'] }}
-            <div>
-                <small class="text-muted">({{direction['distance']}} miles)</small>
+                    <ol>
+                        {% for direction in secured_trip[destination]['route']['directions'] %}
+                        <li>{{ direction['narrative'] }}
+                            <div>
+                                <small class="text-muted">({{direction['distance']}} miles)</small>
+                            </div>
+                        </li>
+                        {% endfor %}
+                    </ol>
+                </div>
+                {% endif %}
+                {%endfor %}
+
             </div>
-        </li>
-        {% endfor %}
-    </ol>
-
-    {% endif %}
-    {%endfor %}
-
-
+        </div>
+    </div>
 </div>
 
 

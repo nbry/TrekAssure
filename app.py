@@ -27,6 +27,10 @@ toolbar = DebugToolbarExtension(app)
 
 connect_db(app)
 
+@app.route('/testing')
+def show_testing_page():
+    """ Temporary """
+    return render_template('testing.html')
 
 @app.route('/')
 def home_page():
