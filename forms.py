@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, IntegerField, SelectField, PasswordField, BooleanField
-from wtforms.validators import InputRequired
+from wtforms.validators import InputRequired, Length, Email
 
 choices = [5, 10, 15, 20, 25, 50, 100]
 
@@ -22,3 +22,12 @@ class SecureHikeForm(FlaskForm):
     # gas_station = BooleanField('gas station')
     # pharmacy = BooleanField('pharmacy')
     # police_station = BooleanField('police station')
+
+
+class UserForm(FlaskForm):
+    username = StringField("Username", validators=[InputRequired(), Length(
+        min=6, max=15, message="Username must be 6-15 characters long")])
+    password = PasswordField("Password", validators=[InputRequired(), Length(min=6)])
+    email = StringField("Email (optional)", validators=[
+                        Email("Please enter a valid email address")])
+    address = StringField("Home Address (optional)")

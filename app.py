@@ -1,10 +1,10 @@
 import os
 import requests
-from flask import Flask, render_template, redirect
+from flask import Flask, render_template, redirect, session, flash
 from flask_debugtoolbar import DebugToolbarExtension
 
-from forms import TrailSearchForm, SecureHikeForm
-from models import db, connect_db
+from forms import TrailSearchForm, SecureHikeForm, UserForm
+from models import db, connect_db, User
 from secrets import m_key, h_key
 from functions import (search_for_trails, get_trail, get_conditions,
                        get_geo_info, rate_difficulty, get_directions, search_for_nearest,
@@ -59,6 +59,7 @@ def search_trail_form():
                                     geo_info['lng'], radius)
 
         for trail in results:
+            robert
             trail['difficulty'] = rate_difficulty(trail['difficulty'])
 
         return render_template("/trail/search_results.html",
@@ -95,3 +96,38 @@ def secure_hike(trail_id):
 # *****************************
 # "USER"  ROUTES
 # *****************************
+
+@app.route('/signup', methods=['GET', 'POST'])
+def signup_user():
+    """ Show sign up page for a user, and handle post """
+
+    form = UserForm()
+
+    if form.validate_on_submit():
+        username = form.username.data
+        password = form.password.data
+
+        if form.email.data == "":
+            email = None
+        else:
+            email = form.email.data
+
+        if form.address.data == "":
+            address = None
+        else:
+            address = form.address.data
+
+        new_user = User.register(username, password, email, address)
+        db.session.add(new_user)
+        try:
+            db.session.commit()
+        except:
+            form.username.errors.append('Username taken')
+            return render_template('/user/signup.html', form=form)
+
+        session['user_id'] = new_user.id
+        flash('Successfully created your account.', 'success')
+        return redirect('/')
+
+    else:
+        return render_template('/user/signup.html', form=form)
