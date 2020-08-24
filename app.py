@@ -27,10 +27,12 @@ toolbar = DebugToolbarExtension(app)
 
 connect_db(app)
 
+
 @app.route('/testing')
 def show_testing_page():
     """ Temporary """
     return render_template('testing.html')
+
 
 @app.route('/')
 def home_page():
@@ -38,7 +40,7 @@ def home_page():
     return render_template("extends.html")
 
 # *****************************
-# "TRAIL" RELATED ROUTES
+# "TRAIL"  ROUTES
 # *****************************
 
 
@@ -49,9 +51,9 @@ def search_trail_form():
     form = TrailSearchForm()
 
     if form.validate_on_submit():
-        zip_code = form.zip_code.data
+        place_search = form.place_search.data
         radius = form.radius.data
-        geo_info = get_geo_info(zip_code)
+        geo_info = get_geo_info(m_key, place_search)
 
         results = search_for_trails(h_key, geo_info['lat'],
                                     geo_info['lng'], radius)
@@ -62,7 +64,7 @@ def search_trail_form():
         return render_template("/trail/search_results.html",
                                results=results,
                                radius=radius,
-                               city=geo_info['major_city'])
+                               city=geo_info['city'])
     else:
         return render_template("/trail/search_form.html", form=form)
 
@@ -88,3 +90,8 @@ def secure_hike(trail_id):
 
     else:
         return render_template('/trail/secure_form.html', form=form, trail_id=trail_id)
+
+
+# *****************************
+# "USER"  ROUTES
+# *****************************

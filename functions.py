@@ -10,21 +10,21 @@ HPAPI_BASE_URL = 'https://www.hikingproject.com/data'
 # *****************************
 
 
-def get_geo_info(zip_code):
-    """ Using uszipcode package, get geographical info of a user-inputted
-    zipcode. Return a dictionary of that information"""
+# def get_geo_info(zip_code):
+#     """ Using uszipcode package, get geographical info of a user-inputted
+#     zipcode. Return a dictionary of that information"""
 
-    search = SearchEngine(simple_zipcode=True)
-    geo_info = search.by_zipcode(f"{zip_code}")
-    geo_info_dict = geo_info.to_dict()
+#     search = SearchEngine(simple_zipcode=True)
+#     geo_info = search.by_zipcode(f"{zip_code}")
+#     geo_info_dict = geo_info.to_dict()
 
-    return geo_info_dict
+#     return geo_info_dict
 
 
 # *****************************
 # MAPQUEST API FUNCTIONS:
 # *****************************
-categories = ['Gas Station', 'Pharmacy', 'Hospital', 'Police Station']
+categories = ['coffee shop']
 
 
 def secure_trip(key, trail, to_address):
@@ -93,23 +93,24 @@ def search_for_nearest(key, location, category):
 
     return result
 
-# def TEMPORARY(key, zip_code):
-#     """ Using Zip Code, get some geographical info info """
-#     response = requests.get(f"{MQAPI_BASE_URL}/geocoding/v1/address",
-#                             params={'key': key, 'location': zip_code})
 
-#     data = response.json()
-#     lat = data['results'][0]['locations'][0]['latLng']['lat']
-#     lon = data['results'][0]['locations'][0]['latLng']['lng']
-#     city = data['results'][0]['locations'][0]['adminArea5']
+def get_geo_info(key, place_search):
+    """ Using MapQuest's Place Search SDK and geocoding API, get some geographical info info """
+    response = requests.get(f"{MQAPI_BASE_URL}/geocoding/v1/address",
+                            params={'key': key, 'location': place_search})
 
-#     results = {
-#         'lat': lat,
-#         'lon': lon,
-#         'city': city
-#     }
+    data = response.json()
+    lat = data['results'][0]['locations'][0]['latLng']['lat']
+    lng = data['results'][0]['locations'][0]['latLng']['lng']
+    city = data['results'][0]['locations'][0]['adminArea5']
 
-#     return results
+    results = {
+        'lat': lat,
+        'lng': lng,
+        'city': city
+    }
+
+    return results
 
 
 # *****************************

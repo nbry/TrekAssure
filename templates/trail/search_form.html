@@ -1,38 +1,69 @@
 {% extends "base.html" %}
 
+{% block head %}
+<script src="https://api.mqcdn.com/sdk/place-search-js/v1.0.0/place-search.js"></script>
+<link type="text/css" rel="stylesheet" href="https://api.mqcdn.com/sdk/place-search-js/v1.0.0/place-search.css" />
+{% endblock %}
 {% block title %}search{% endblock %}
 
 {% block content %}
 <div class="search-bg">
     <div class="form-accent container p-2">
-        <div id="trail-form" class="container text-center py-4 px-5">
-            <h1>Search for a Trail</h1>
+        <div id="trail-form" class="container py-4 px-5">
+            <h1 class="text-center display-2">Find Your Trail</h1>
 
-            <form method="POST">
+            <form method="POST" class="form-group">
                 <div class="row">
                     {{ form.hidden_tag() }}
 
                     {% for field in form
                if field.widget.input_type != 'hidden' %}
-                    <div class="col">
+                    {% if field.id == 'place_search' %}
+                    <div class="col-8">
+                        <p>
+                            {{ field.label(for="place-search-input", class="text-align-left")}}
+                            {{ field(id="place-search-input", class_='form-control', placeholder="Park Name, City, Zip Code") }}
+                            {% for error in field.errors %}
+                            <span class="form-text text-danger">{{ error }}</span>
+                            {% endfor %}
+
+                        </p>
+                    </div>
+
+                    {% else %}
+                    <div class="col-4">
                         <p>
                             {{ field.label }}
                             {{ field(class_='form-control') }}
-
                             {% for error in field.errors %}
                             <span class="form-text text-danger">{{ error }}</span>
                             {% endfor %}
                         </p>
                     </div>
+                    {% endif %}
                     {% endfor %}
                 </div>
+                <button class="btn btn-block btn-lg btn-info mt-2" type="submit">Search</button>
 
-                <button class="btn btn-lg btn-info" type="submit">Search</button>
             </form>
         </div>
     </div>
 </div>
 
+<div id="search-info-box" class="text-center">
+    <div class=py-3>
+        <p class="search-info-text">
+            Peace of mind
+        </p>
+        <p class="search-info-text">
+            for your adventure
+        </p>
+        <p class="search-info-text fon">
+            and <span class="font-italic">the journey back home</span>
+        </p>
 
+    </div>
+
+</div>
 
 {% endblock %}
