@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}sign in{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Log In</h1>
+    <p>Log in below. Don't have an account? <a href="/signup">Register here</a></p>
+
+    <form method="POST">
+
+        {{ form.hidden_tag() }}
+
+        {% for field in form
+           if field.widget.input_type != 'hidden' 
+           and field.name == 'username' 
+           or field.name == 'password' %}
+        <p>
+            {{ field.label }}
+            {{ field(class_='form-control') }}
+
+            {% for error in field.errors %}
+            <span class="form-text text-danger">{{ error }}</span>
+            {% endfor %}
+        </p>
+        {% endfor %}
+
+        <button class="btn btn-success" type="submit">Log in</button>
+</div>
+
+{% endblock %}

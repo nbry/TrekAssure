@@ -24,23 +24,28 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarText">
             <ul class="navbar-nav ml-auto">
-                <li class="nav-item active">
-                    <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
+
+
+                {% if not g.user %}
+                <li><a class="nav-link pl-3 text-light" href="/signup">sign up</a></li>
+                <li><a class="nav-link pl-3 text-light" href="/login">log in</a></li>
+                {% else %}
+                <li>
+                    <a class="nav-link" href="#">
+                        <i class="fas fa-user fa-sm"></i> {{g.user.username}}
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/trails/search">Find a Trail</a>
+                    <a class="nav-link pl-3 text-light" href="/trails/search">find a trail</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/signup">Sign Up</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Login</a>
-                </li>
+                <li><a class="nav-link pl-3 text-light" href="/logout">log out</a></li>
+                {% endif %}
+
+
             </ul>
 
         </div>
     </nav>
-
 
 
     {% block content %}{% endblock %}

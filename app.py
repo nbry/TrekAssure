@@ -1,15 +1,16 @@
 import os
 import requests
-from flask import Flask, render_template, redirect, session, flash
+from flask import Flask, render_template, redirect, session, flash, g
 from flask_debugtoolbar import DebugToolbarExtension
 
-from forms import TrailSearchForm, SecureHikeForm, UserForm
+from forms import TrailSearchForm, SecureHikeForm, UserSignupForm, LoginForm
 from models import db, connect_db, User
 from secrets import m_key, h_key
 from functions import (search_for_trails, get_trail, get_conditions,
                        get_geo_info, rate_difficulty, get_directions, search_for_nearest,
                        secure_trip)
 
+CURR_USER_KEY = "curr_user"
 
 app = Flask(__name__)
 MQAPI_BASE_URL = 'http://www.mapquestapi.com/'
@@ -27,11 +28,33 @@ toolbar = DebugToolbarExtension(app)
 
 connect_db(app)
 
+# *****************************
+# LOGIN/LOGOUT
+# *****************************
 
-@app.route('/testing')
-def show_testing_page():
-    """ Temporary """
-    return render_template('testing.html')
+
+@app.before_request
+def add_user_to_g():
+    """If we're logged in, add curr user to Flask global."""
+
+    if CURR_USER_KEY in session:
+        g.user = User.query.get(session[CURR_USER_KEY])
+
+    else:
+        g.user = None
+
+
+def do_login(user):
+    """Log in user."""
+
+    session[CURR_USER_KEY] = user.id
+
+
+def do_logout():
+    """Logout user."""
+
+    if CURR_USER_KEY in session:
+        del session[CURR_USER_KEY]
 
 
 @app.route('/')
@@ -101,7 +124,7 @@ def secure_hike(trail_id):
 def signup_user():
     """ Show sign up page for a user, and handle post """
 
-    form = UserForm()
+    form = UserSignupForm()
 
     if form.validate_on_submit():
         username = form.username.data
@@ -125,9 +148,38 @@ def signup_user():
             form.username.errors.append('Username taken')
             return render_template('/user/signup.html', form=form)
 
-        session['user_id'] = new_user.id
+        do_login(user)
         flash('Successfully created your account.', 'success')
         return redirect('/')
 
     else:
         return render_template('/user/signup.html', form=form)
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login_user():
+    form = LoginForm()
+    if form.validate_on_submit():
+        username = form.username.data
+        password = form.password.data
+
+        user = User.authenticate(username, password)
+
+        if user:
+            do_login(user)
+            flash(f"Welcome back, {user.username}", "primary")
+            return redirect('/')
+
+        else:
+            form.username.errors = ['Invalid username/password']
+
+    return render_template('/user/login.html', form=form)
+
+
+@app.route('/logout')
+def logout_user():
+
+    do_logout()
+    flash("logged out", "info")
+    
+    return redirect('/')
