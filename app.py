@@ -2,6 +2,7 @@ import os
 import requests
 from flask import Flask, render_template, redirect, session, flash, g
 from flask_debugtoolbar import DebugToolbarExtension
+from sqlalchemy.exc import IntegrityError
 
 from forms import TrailSearchForm, SecureHikeForm, UserSignupForm, LoginForm
 from models import db, connect_db, User
@@ -29,7 +30,7 @@ toolbar = DebugToolbarExtension(app)
 connect_db(app)
 
 # *****************************
-# LOGIN/LOGOUT
+# LOGIN/, LOGOUT, AND g FUNCTIONS
 # *****************************
 
 
@@ -57,6 +58,17 @@ def do_logout():
         del session[CURR_USER_KEY]
 
 
+def store_search(results, radius, geo_info):
+    """ Store trail search results in g in case user refreshes """
+
+    if CURR_USER_KEY in session:
+        g.user_search = {
+            'results': results,
+            'radius': radius,
+            'geo_info': geo_info
+        }
+
+
 @app.route('/')
 def home_page():
     """ Show Home Page """
@@ -73,18 +85,20 @@ def search_trail_form():
     a user to serach for a trail """
     form = TrailSearchForm()
 
+    # If user is logged in and refreshes after searching, show same results
+    # if CURR_USER_KEY in session:
+
     if form.validate_on_submit():
         place_search = form.place_search.data
         radius = form.radius.data
         geo_info = get_geo_info(m_key, place_search)
-
         results = search_for_trails(h_key, geo_info['lat'],
                                     geo_info['lng'], radius)
 
         for trail in results:
-            robert
             trail['difficulty'] = rate_difficulty(trail['difficulty'])
 
+        store_search(results, radius, geo_info)
         return render_template("/trail/search_results.html",
                                results=results,
                                radius=radius,
@@ -142,15 +156,23 @@ def signup_user():
 
         new_user = User.register(username, password, email, address)
         db.session.add(new_user)
+
         try:
             db.session.commit()
-        except:
-            form.username.errors.append('Username taken')
+        except IntegrityError:
+            db.session.rollback()
+            if User.query.filter_by(username=username).first():
+                form.username.errors.append('Username taken')
+
+            if User.query.filter_by(email=email).first():
+                form.email.errors.append(
+                    'Account already exists for this address')
             return render_template('/user/signup.html', form=form)
 
-        do_login(user)
-        flash('Successfully created your account.', 'success')
-        return redirect('/')
+        do_login(new_user)
+        flash('Successfully created your account!', 'success')
+
+        return redirect('/trails/search')
 
     else:
         return render_template('/user/signup.html', form=form)
@@ -167,8 +189,8 @@ def login_user():
 
         if user:
             do_login(user)
-            flash(f"Welcome back, {user.username}", "primary")
-            return redirect('/')
+            flash(f"Welcome back, {user.username}!", "info")
+            return redirect('/trails/search')
 
         else:
             form.username.errors = ['Invalid username/password']
@@ -180,6 +202,6 @@ def login_user():
 def logout_user():
 
     do_logout()
-    flash("logged out", "info")
-    
+    flash("logged out", "warning")
+
     return redirect('/')

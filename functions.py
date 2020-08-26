@@ -24,7 +24,14 @@ HPAPI_BASE_URL = 'https://www.hikingproject.com/data'
 # *****************************
 # MAPQUEST API FUNCTIONS:
 # *****************************
-categories = ['coffee shop']
+
+
+categories = {
+    'gas station': 'sic:554101',
+    'pharmacy': 'sic:591205',
+    'hospital': 'sic:801105',
+    'police station': 'sic:922104'
+}
 
 
 def secure_trip(key, trail, to_address):
@@ -39,12 +46,13 @@ def secure_trip(key, trail, to_address):
     results_dict = {}
 
     # Set result dict categories e.g. dict == {gas: {}, pharmacy: {}, ...etc }
-    for category in categories:
-        results_dict[category] = {}
+    for destination in categories:
+        results_dict[destination] = {}
 
         new_category_info_value = search_for_nearest(
-            key, lon_lat_trail, category)
-        results_dict[category]['info'] = new_category_info_value
+            key, lon_lat_trail, categories[destination])
+
+        results_dict[destination]['info'] = new_category_info_value
 
     # Set lat/lon coords for each category
     for category in results_dict:
@@ -75,7 +83,10 @@ def get_directions(key, to_address, from_address):
 
     data = response.json()
     route_info = data['route']
-    directions = data['route']['legs'][0]['maneuvers']
+    try:
+        directions = data['route']['legs'][0]['maneuvers']
+    except:
+        directions = []
 
     return {'directions': directions, 'route_info': route_info}
 
@@ -86,7 +97,7 @@ def search_for_nearest(key, location, category):
     Gas station, hospital, pharmacy, and police station """
 
     response = requests.get(f"{MQAPI_BASE_URL}/search/v4/place", params={
-                            'key': key, 'location': location, 'q': category, 'sort': 'distance'})
+                            'key': key, 'location': location, 'category': category, 'sort': 'distance'})
 
     data = response.json()
     result = data['results'][0]
@@ -123,7 +134,7 @@ def search_for_trails(key, lat, lon, radius=None):
     on user search parameters """
 
     if radius:
-        params = {'key': key, 'lat': lat, 'lon': lon, 'sort': 'quality',
+        params = {'key': key, 'lat': lat, 'lon': lon, 'sort': 'distance',
                   'maxResults': 500, 'maxDistance': radius}
     else:
         params = {'key': key, 'lat': lat, 'lon': lon,
