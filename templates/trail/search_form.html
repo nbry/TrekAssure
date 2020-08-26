@@ -1,52 +1,54 @@
 {% extends "base.html" %}
 
 {% block head %}
-<script src="https://api.mqcdn.com/sdk/place-search-js/v1.0.0/place-search.js"></script>
 <link type="text/css" rel="stylesheet" href="https://api.mqcdn.com/sdk/place-search-js/v1.0.0/place-search.css" />
 {% endblock %}
-{% block title %}search{% endblock %}
+
+{% block title %}Search Trail{% endblock %}
 
 {% block content %}
 <div class="search-bg">
-    <div class="form-accent container p-2">
-        <div id="trail-form" class="container py-4 px-5">
-            <h1 class="text-center display-2">Find Your Trail</h1>
+    <div id="trail-form" class="container py-4 px-5">
+        <h1 class="text-center display-2">Find Your Trail</h1>
 
-            <form method="POST" class="form-group">
-                <div class="row">
-                    {{ form.hidden_tag() }}
+        <form method="POST" href="/trails/results" class="form-group">
+            <div class="row">
+                {{ form.hidden_tag() }}
 
-                    {% for field in form
+                {% for field in form
                if field.widget.input_type != 'hidden' %}
-                    {% if field.id == 'place_search' %}
-                    <div class="col-8">
-                        <p>
-                            {{ field.label(for="place-search-input", class="text-align-left")}}
-                            {{ field(id="place-search-input", class_='form-control', placeholder="Park Name, City, Zip Code") }}
-                            {% for error in field.errors %}
-                            <span class="form-text text-danger">{{ error }}</span>
-                            {% endfor %}
+                {% if field.id == 'place_search' %}
+                <div class="col">
+                    <p>
+                        {{ field.label(for="place-search-input", class="text-align-left")}}
+                        <a id="search-help" tabindex="0" role="button" display="hidden" data-toggle="popover"
+                            data-trigger="focus" title="Search Tips" data-placement="right"
+                            data-content="For best results, search for the park name.">
+                            <i class="far fa-question-circle"></i>
+                        </a>
+                        {{ field(id="place-search-input", class_='form-control', placeholder="Park Name, City, Zip Code") }}
+                        {% for error in field.errors %}
+                        <span class="form-text text-danger">{{ error }}</span>
+                        {% endfor %}
 
-                        </p>
-                    </div>
-
-                    {% else %}
-                    <div class="col-4">
-                        <p>
-                            {{ field.label }}
-                            {{ field(class_='form-control') }}
-                            {% for error in field.errors %}
-                            <span class="form-text text-danger">{{ error }}</span>
-                            {% endfor %}
-                        </p>
-                    </div>
-                    {% endif %}
-                    {% endfor %}
+                    </p>
                 </div>
-                <button class="btn btn-block btn-lg btn-info mt-2" type="submit">Search</button>
 
-            </form>
-        </div>
+                {% else %}
+                <div class="col">
+                    <p>
+                        {{ field.label }}
+                        {{ field(class_='form-control') }}
+                        {% for error in field.errors %}
+                        <span class="form-text text-danger">{{ error }}</span>
+                        {% endfor %}
+                    </p>
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+            <button class="btn btn-block btn-lg btn-success mt-2" type="submit">Search</button>
+        </form>
     </div>
 </div>
 
@@ -65,5 +67,7 @@
     </div>
 
 </div>
+
+
 
 {% endblock %}

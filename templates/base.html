@@ -6,15 +6,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
         integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.0/css/all.css">
     <link rel="stylesheet" href="/static/app.css">
     {% block head %}{% endblock %}
     <title>{% block title %}{% endblock %}</title>
 </head>
 
 <body>
-    <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark">
-        <a class="navbar-brand" href="/">TrekAssure</a>
+    <nav class="navbar sticky-top navbar-expand-lg navbar-dark" style="background-color: rgb(3, 59, 66);">
+        <a class="navbar-brand" href="/">
+            <i class="fas fa-mountain"></i> TrekAssure
+        </a>
         {% for category, message in get_flashed_messages(with_categories=True) %}
         <span class="alert alert-{{ category }} py-0 m-0">{{ message }}</span>
         {% endfor %}
@@ -27,8 +29,8 @@
 
 
                 {% if not g.user %}
-                <li><a class="nav-link pl-3 text-light" href="/signup">sign up</a></li>
-                <li><a class="nav-link pl-3 text-light" href="/login">log in</a></li>
+                <li><a class="nav-link pl-3 text-light" href="/signup">Sign Up</a></li>
+                <li><a class="nav-link pl-3 text-light" href="/login">Log In</a></li>
                 {% else %}
                 <li>
                     <a class="nav-link" href="#">
@@ -36,9 +38,9 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link pl-3 text-light" href="/trails/search">find your trail</a>
+                    <a class="nav-link pl-3 text-light" href="/trails/search">Find Your Trail</a>
                 </li>
-                <li><a class="nav-link pl-3 text-light" href="/logout">log out</a></li>
+                <li><a class="nav-link pl-3 text-light" href="/logout">Log Out</a></li>
                 {% endif %}
 
 
@@ -50,6 +52,8 @@
 
     {% block content %}{% endblock %}
 
+    <div id="dimmer"></div>
+
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
         integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
@@ -60,8 +64,7 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
         integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
         crossorigin="anonymous"></script>
-    <script src="https://code.jquery.com/jquery-3.5.1.js"
-        integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
+    <script src="https://api.mqcdn.com/sdk/place-search-js/v1.0.0/place-search.js"></script>
     <script src="/static/app.js"></script>
 </body>
 

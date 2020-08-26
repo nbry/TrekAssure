@@ -79,7 +79,7 @@ def home_page():
 # *****************************
 
 
-@app.route('/trails/search', methods=['GET', 'POST'])
+@app.route('/trails/results', methods=['GET', 'POST'])
 def search_trail_form():
     """ Render page that shows a form that allows
     a user to serach for a trail """
@@ -104,7 +104,13 @@ def search_trail_form():
                                radius=radius,
                                city=geo_info['city'])
     else:
-        return render_template("/trail/search_form.html", form=form)
+        return redirect('/trails/search')
+
+
+@app.route('/trails/search')
+def show_search_results():
+    form = TrailSearchForm()
+    return render_template("/trail/search_form.html", form=form)
 
 
 @app.route('/trails/<int:trail_id>/secure', methods=['GET', 'POST'])

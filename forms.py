@@ -2,7 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, IntegerField, SelectField, PasswordField, BooleanField
 from wtforms.validators import InputRequired, Length, Email
 
-choices = [5, 10, 15, 20, 25, 50, 100]
+choices = [10, 20, 30, 40, 50, 100]
 
 
 class TrailSearchForm(FlaskForm):
