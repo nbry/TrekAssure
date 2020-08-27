@@ -55,6 +55,73 @@
 <!-- This should be changed -->
 <div class="spacer"></div>
 
+
+{% if results %}
+<div id="results-container" class="container">
+    <h1 class="display-2">Results</h1>
+    <small id="results-number" class="ml-1">(Found {{ results|length }} Trails)</small>
+
+    <div id="search-results" class="list-group">
+        {% for result in results %}
+        <a href="#" class="list-group-item list-group-item-action mb-1" data-toggle="modal"
+            data-target="#modal-{{result.id}}">
+            <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">{{result.name}}</h5>
+                <small>{{result.difficulty[0]}}</small>
+            </div>
+            <p class="mb-1">{{result.summary}}</p>
+            <small>Rating: {{result.stars}} out of 5 ({{result.starVotes}})</small>
+        </a>
+
+        <div class="modal fade" id="modal-{{result.id}}" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header text-center py-1">
+                        <h5 class="modal-title" id="ModalLabel">{{result.name}}</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-7">
+                                <img src="{{result.imgMedium}}" class="rounded img-fluid" alt="...">
+                            </div>
+                            <div class="col-5">
+                                <blockquote class="blockquote font-italic">
+                                    <p class="mb-0">{{result.summary}}</p>
+                                </blockquote>
+                                <hr>
+                                <ul class="ml-0">
+                                    <li>Location: {{result.location}}</li>
+                                    <li>Length: {{result.length}} miles</li>
+                                    <li>Difficulty: {{result.difficulty[0]}}</li>
+                                    <li>
+                                        <small>
+                                            <a target="_blank"
+                                                href="https://www.hikingproject.com/trail/{{result.id}}/{{result.name}}">
+                                                (...more info about this trail)
+                                            </a>
+                                        </small>
+                                    </li>
+                                    <ul>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer justify-content-center">
+                        <p class="lead mr-5">Is this your hike?</p>
+                        <a href="/trails/{{result.id}}/secure" class="btn btn-success">Yes</a>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">No</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% else %}
 <div id="results-container" class="container hidden">
     <h1 class="display-2">Results</h1>
     <small id="results-number" class="ml-1"></small>
@@ -63,7 +130,7 @@
 
     </div>
 </div>
-
+{% endif %}
 
 
 {% endblock %}

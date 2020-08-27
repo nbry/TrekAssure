@@ -5,13 +5,14 @@ from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 
 from forms import TrailSearchForm, SecureHikeForm, UserSignupForm, LoginForm
-from models import db, connect_db, User
+from models import db, connect_db, User, TrailsSearch
 from secrets import m_key, h_key
 from functions import (search_for_trails, get_trail, get_conditions,
                        get_geo_info, rate_difficulty, get_directions, search_for_nearest,
                        secure_trip)
 
 CURR_USER_KEY = "curr_user"
+SEARCH_ID = "SEARCH_ID"
 
 app = Flask(__name__)
 MQAPI_BASE_URL = 'http://www.mapquestapi.com/'
@@ -44,6 +45,12 @@ def add_user_to_g():
     else:
         g.user = None
 
+    if SEARCH_ID in session:
+        g.search = TrailsSearch.query.get(session[SEARCH_ID])
+
+    else:
+        g.search = None
+
 
 def do_login(user):
     """Log in user."""
@@ -57,16 +64,8 @@ def do_logout():
     if CURR_USER_KEY in session:
         del session[CURR_USER_KEY]
 
-
-# def store_search(results, radius, geo_info):
-#     """ Store trail search results in g in case user refreshes """
-
-#     if CURR_USER_KEY in session:
-#         g.user_search = {
-#             'results': results,
-#             'radius': radius,
-#             'geo_info': geo_info
-#         }
+    if SEARCH_ID in session:
+        del session[SEARCH_ID]
 
 
 @app.route('/')
@@ -75,19 +74,19 @@ def home_page():
     return render_template("extends.html")
 
 # *****************************
-# "TRAIL"  ROUTES
+# TREKASSURE "TRAIL SEARCH" REQUEST HANDLING
 # *****************************
 
 
-@app.route('/trails/results/')
+@app.route('/trails/results')
 def get_trails():
     """ Handle a request (from front end) and respond with
     a JSON object with trail info """
 
     place_search = request.args['place']
-
     radius = int(request.args['radius'])
     geo_info = get_geo_info(m_key, place_search)
+
     results = search_for_trails(h_key, geo_info['lat'],
                                 geo_info['lng'], radius)
     for trail in results:
@@ -96,10 +95,53 @@ def get_trails():
     return jsonify(results)
 
 
+@app.route('/trails/store-results', methods=['POST'])
+def store_trails():
+    """ Store JSON results to database """
+    response = request.get_json()
+
+    results = response['data']['results']
+    place = response['data']['place']
+    radius = response['data']['radius']
+
+    results_to_db = TrailsSearch(
+        user_id=session[CURR_USER_KEY],
+        place=place,
+        radius=radius,
+        data=results)
+
+    db.session.add(results_to_db)
+    db.session.commit()
+
+    search_id = results_to_db.id
+    session['SEARCH_ID'] = search_id
+
+    return jsonify(results_to_db.data)
+
+
+# *****************************
+# "TRAIL SEARCH" ROUTES
+# *****************************
+
 @app.route('/trails/search')
 def show_search_results():
+    """ Render a form that shows "Find Your Trail" form """
+
     form = TrailSearchForm()
-    return render_template("/trail/search_form.html", form=form)
+
+    if SEARCH_ID in session:
+        return render_template("/trail/search_form.html", form=form, results=g.search.data)
+
+    else:
+        return render_template("/trail/search_form.html", form=form, results=None)
+
+
+@app.route('/trails/<int:id>')
+def show_trail():
+    """ Render a page that shows detail about a trail, should the user manually search by id.
+    This is not an explicit feature of TrekAssure, more of a quality of life consideration """
+
+    
 
 
 @app.route('/trails/<int:trail_id>/secure', methods=['GET', 'POST'])
@@ -165,7 +207,7 @@ def signup_user():
             return render_template('/user/signup.html', form=form)
 
         do_login(new_user)
-        flash('Successfully created your account!', 'success')
+        flash('Created your account!', 'success')
 
         return redirect('/trails/search')
 

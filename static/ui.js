@@ -5,7 +5,7 @@ $(async function () {
   const $searchPlace = $("#place-search-input")
   const $within = $("#radius")
 
-  // m_key is maqpest api key
+  // m_key is a mapquest API key
 
   if ($('#place-search-input')[0]) {
     placeSearch({
@@ -49,24 +49,23 @@ $(async function () {
     event.preventDefault();
     $('#loading').append($(`<i class="far fa-compass fa-5x fa-spin"></i>`))
 
+    // TREKASSURE API call to get results and append:
     const results = await SearchTrailList.getTrails($searchPlace.val(), $within.val());
     $('#search-results').children().remove();
-
     for (let result of results.data) {
       const resultDiv = generateResultHTML(result);
       $('#search-results').append(resultDiv);
     };
 
     $('#results-number').text(`(Found ${results.data.length} Trails)`);
-
-
     $('#loading').children().remove();
-
     $('#results-container').slideDown(500);
-
     $([document.documentElement, document.body]).animate({
       scrollTop: $(".spacer").offset().top
     }, 600);
+
+    // TREKASSURE API call to store search result to database
+    const search = await SearchTrailList.storeTrailSearch(results.data, $searchPlace.val(), $within.val());
 
   });
 
@@ -87,7 +86,7 @@ $(async function () {
     resultsMarkup = $(`
 
 <a href="#" class="list-group-item list-group-item-action mb-1" data-toggle="modal"
-    data-target="#exampleModal${result.id}">
+    data-target="#modal-${result.id}">
     <div class="d-flex w-100 justify-content-between">
         <h5 class="mb-1">${result.name}</h5>
         <small>${result.difficulty[0]}</small>
@@ -96,12 +95,12 @@ $(async function () {
     <small>Rating: ${result.stars} out of 5 (${result.starVotes})</small>
 </a>
 
-<div class="modal fade" id="exampleModal${result.id}" tabindex="-1" aria-labelledby="exampleModalLabel"
+<div class="modal fade" id="modal-${result.id}" tabindex="-1" aria-labelledby="ModalLabel"
     aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header text-center py-1">
-                <h5 class="modal-title" id="exampleModalLabel">${result.name}</h5>
+                <h5 class="modal-title" id="ModalLabel">${result.name}</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>

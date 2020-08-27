@@ -48,3 +48,17 @@ class User(db.Model):
             return user
         else:
             return False
+
+
+class TrailsSearch(db.Model):
+
+    __tablename__ = "searches"
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_id = db.Column(db.Integer, db.ForeignKey(
+        "users.id", ondelete="cascade"), nullable=False)
+    place = db.Column(db.Text)
+    radius = db.Column(db.Integer)
+    data = db.Column(db.JSON)
+
+    user = db.relationship("User", backref="searches")

@@ -107,6 +107,7 @@ def search_for_nearest(key, location, category):
 
 def get_geo_info(key, place_search):
     """ Using MapQuest's Place Search SDK and geocoding API, get some geographical info info """
+    
     response = requests.get(f"{MQAPI_BASE_URL}/geocoding/v1/address",
                             params={'key': key, 'location': place_search})
 

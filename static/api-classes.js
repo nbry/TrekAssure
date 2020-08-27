@@ -15,4 +15,14 @@ class SearchTrailList {
 
         return response;
     }
+
+    static async storeTrailSearch(results, place, radius) {
+        axios.post('/trails/store-results', {
+            data: {
+                'results': results,
+                'place': place,
+                'radius': radius
+            }
+        })
+    }
 }
