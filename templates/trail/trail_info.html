@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}{{ result.name }}{% endblock %}
+
+{% block content %}
+<div class="container">
+
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header text-center py-1">
+                <h5 class="modal-title" id="ModalLabel">{{result.name}}</h5>
+            </div>
+            <div class="modal-body d-flex">
+                <div class="row">
+                    <div class="col-7">
+                        <img src="{{result.imgMedium}}" class="rounded img-fluid" alt="...">
+                    </div>
+                    <div class="col-5">
+                        <blockquote class="blockquote font-italic">
+                            <p class="mb-0">{{result.summary}}</p>
+                        </blockquote>
+                        <hr>
+                        <ul class="ml-0 p-1">
+                            <li>{{result.location}}</li>
+                            <li>{{result.length}} miles</li>
+                            <li>Difficulty: {{result.difficulty[0]}}</li>
+                            <li>
+                                <small>
+                                    <a target="_blank"
+                                        href="https://www.hikingproject.com/trail/{{result.id}}/{{result.name}}">
+                                        (...more info about this trail)
+                                    </a>
+                                </small>
+                            </li>
+                            <ul>
+
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer justify-content-center">
+                <p class="lead mr-5">Is this your hike?</p>
+                <a href="/trails/{{result.id}}/secure" class="btn btn-success">Yes</a>
+                <a href="/trails/search" class="btn btn-danger">No</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock %}

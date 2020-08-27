@@ -13,6 +13,7 @@ from functions import (search_for_trails, get_trail, get_conditions,
 
 CURR_USER_KEY = "curr_user"
 SEARCH_ID = "SEARCH_ID"
+FILTERED_RESULTS = "FILTERED_RESULTS"
 
 app = Flask(__name__)
 MQAPI_BASE_URL = 'http://www.mapquestapi.com/'
@@ -123,6 +124,16 @@ def store_trails():
 # "TRAIL SEARCH" ROUTES
 # *****************************
 
+@app.route('/trails/refresh')
+def refresh_trails():
+    """ User cliked 'Find Your Trail' Button. Clear previous search results """
+
+    if SEARCH_ID in session:
+        del session[SEARCH_ID]
+
+    return redirect('/trails/search')
+
+
 @app.route('/trails/search')
 def show_search_results():
     """ Render a form that shows "Find Your Trail" form """
@@ -136,12 +147,15 @@ def show_search_results():
         return render_template("/trail/search_form.html", form=form, results=None)
 
 
-@app.route('/trails/<int:id>')
-def show_trail():
+@app.route('/trails/<int:trail_id>')
+def show_trail(trail_id):
     """ Render a page that shows detail about a trail, should the user manually search by id.
     This is not an explicit feature of TrekAssure, more of a quality of life consideration """
 
-    
+    trail = get_trail(h_key, trail_id)
+    trail['difficulty'] = rate_difficulty(trail['difficulty'])
+
+    return render_template('/trail/trail_info.html', result=trail)
 
 
 @app.route('/trails/<int:trail_id>/secure', methods=['GET', 'POST'])

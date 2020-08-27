@@ -5,7 +5,7 @@ $(async function () {
   const $searchPlace = $("#place-search-input")
   const $within = $("#radius")
 
-  // m_key is a mapquest API key
+  // m_key is mapquest API key
 
   if ($('#place-search-input')[0]) {
     placeSearch({
@@ -115,7 +115,7 @@ $(async function () {
                           <p class="mb-0">${result.summary}</p>
                         </blockquote>
                         <hr>
-                        <ul class="ml-0">
+                        <ul class="ml-0 p-1">
                           <li>Location: ${result.location}</li>
                           <li>Length: ${result.length} miles</li>
                           <li>Difficulty: ${result.difficulty[0]}</li>

@@ -23,7 +23,7 @@
                         {{ field.label(for="place-search-input", class="text-align-left")}}
                         <a id="search-help" tabindex="0" role="button" display="hidden" data-toggle="popover"
                             data-trigger="focus" title="Find Your Chosen Trail" data-placement="right"
-                            data-content="There are thousands of trails in the US. For the best chance of finding your trail, enter the name of the park and we'll go from there. Zip Code works well too.">
+                            data-content="There are thousands of trails in the US. Enter the park name or zip code of the trail you chose, and we'll do our best to pinpoint it!">
                             <i class="far fa-question-circle"></i>
                         </a>
                         {{ field(id="place-search-input", class_='form-control', placeholder="Park Name, City, Zip Code") }}
@@ -82,7 +82,7 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <div class="modal-body">
+                    <div class="modal-body d-flex">
                         <div class="row">
                             <div class="col-7">
                                 <img src="{{result.imgMedium}}" class="rounded img-fluid" alt="...">
@@ -92,9 +92,9 @@
                                     <p class="mb-0">{{result.summary}}</p>
                                 </blockquote>
                                 <hr>
-                                <ul class="ml-0">
-                                    <li>Location: {{result.location}}</li>
-                                    <li>Length: {{result.length}} miles</li>
+                                <ul class="ml-0 p-1">
+                                    <li>{{result.location}}</li>
+                                    <li>{{result.length}} miles</li>
                                     <li>Difficulty: {{result.difficulty[0]}}</li>
                                     <li>
                                         <small>
