@@ -6,6 +6,14 @@ body {
     background: white;
 }
 
+.hidden {
+    display: none;
+}
+
+.spacer {
+    height: 50px;
+}
+
 .body-shadow {
     position: fixed;
     left: 0;

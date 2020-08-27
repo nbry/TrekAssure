@@ -1,6 +1,6 @@
 import os
 import requests
-from flask import Flask, render_template, redirect, session, flash, g
+from flask import Flask, render_template, redirect, session, flash, g, request, jsonify
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 
@@ -58,15 +58,15 @@ def do_logout():
         del session[CURR_USER_KEY]
 
 
-def store_search(results, radius, geo_info):
-    """ Store trail search results in g in case user refreshes """
+# def store_search(results, radius, geo_info):
+#     """ Store trail search results in g in case user refreshes """
 
-    if CURR_USER_KEY in session:
-        g.user_search = {
-            'results': results,
-            'radius': radius,
-            'geo_info': geo_info
-        }
+#     if CURR_USER_KEY in session:
+#         g.user_search = {
+#             'results': results,
+#             'radius': radius,
+#             'geo_info': geo_info
+#         }
 
 
 @app.route('/')
@@ -79,32 +79,21 @@ def home_page():
 # *****************************
 
 
-@app.route('/trails/results', methods=['GET', 'POST'])
-def search_trail_form():
-    """ Render page that shows a form that allows
-    a user to serach for a trail """
-    form = TrailSearchForm()
+@app.route('/trails/results/')
+def get_trails():
+    """ Handle a request (from front end) and respond with
+    a JSON object with trail info """
 
-    # If user is logged in and refreshes after searching, show same results
-    # if CURR_USER_KEY in session:
+    place_search = request.args['place']
 
-    if form.validate_on_submit():
-        place_search = form.place_search.data
-        radius = form.radius.data
-        geo_info = get_geo_info(m_key, place_search)
-        results = search_for_trails(h_key, geo_info['lat'],
-                                    geo_info['lng'], radius)
+    radius = int(request.args['radius'])
+    geo_info = get_geo_info(m_key, place_search)
+    results = search_for_trails(h_key, geo_info['lat'],
+                                geo_info['lng'], radius)
+    for trail in results:
+        trail['difficulty'] = rate_difficulty(trail['difficulty'])
 
-        for trail in results:
-            trail['difficulty'] = rate_difficulty(trail['difficulty'])
-
-        store_search(results, radius, geo_info)
-        return render_template("/trail/search_results.html",
-                               results=results,
-                               radius=radius,
-                               city=geo_info['city'])
-    else:
-        return redirect('/trails/search')
+    return jsonify(results)
 
 
 @app.route('/trails/search')

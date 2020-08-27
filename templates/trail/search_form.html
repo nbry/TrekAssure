@@ -11,7 +11,7 @@
     <div id="trail-form" class="container py-4 px-5">
         <h1 class="text-center display-2">Find Your Trail</h1>
 
-        <form method="POST" href="/trails/results" class="form-group">
+        <form id="search-trail-form" class="form-group">
             <div class="row">
                 {{ form.hidden_tag() }}
 
@@ -22,8 +22,8 @@
                     <p>
                         {{ field.label(for="place-search-input", class="text-align-left")}}
                         <a id="search-help" tabindex="0" role="button" display="hidden" data-toggle="popover"
-                            data-trigger="focus" title="Search Tips" data-placement="right"
-                            data-content="For best results, search for the park name.">
+                            data-trigger="focus" title="Find Your Chosen Trail" data-placement="right"
+                            data-content="There are thousands of trails in the US. For the best chance of finding your trail, enter the name of the park and we'll go from there. Zip Code works well too.">
                             <i class="far fa-question-circle"></i>
                         </a>
                         {{ field(id="place-search-input", class_='form-control', placeholder="Park Name, City, Zip Code") }}
@@ -52,20 +52,16 @@
     </div>
 </div>
 
-<div id="search-info-box" class="text-center">
-    <div class=py-3>
-        <p class="search-info-text">
-            Peace of mind
-        </p>
-        <p class="search-info-text">
-            for your adventure
-        </p>
-        <p class="search-info-text fon">
-            and <span class="font-italic">the journey back home</span>
-        </p>
+<!-- This should be changed -->
+<div class="spacer"></div>
+
+<div id="results-container" class="container hidden">
+    <h1 class="display-2">Results</h1>
+    <small id="results-number"></small>
+
+    <div id="search-results" class="list-group">
 
     </div>
-
 </div>
 
 
