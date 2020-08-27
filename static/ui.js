@@ -5,7 +5,7 @@ $(async function () {
   const $searchPlace = $("#place-search-input")
   const $within = $("#radius")
 
-  // m_key is mapquest key
+  // m_key is maqpest api key
 
   if ($('#place-search-input')[0]) {
     placeSearch({
@@ -47,19 +47,27 @@ $(async function () {
 
   $searchTrailForm.on("submit", async function (event) {
     event.preventDefault();
+    $('#loading').append($(`<i class="far fa-compass fa-5x fa-spin"></i>`))
 
     const results = await SearchTrailList.getTrails($searchPlace.val(), $within.val());
     $('#search-results').children().remove();
+
     for (let result of results.data) {
       const resultDiv = generateResultHTML(result);
       $('#search-results').append(resultDiv);
     };
 
-    $('#results-container').show();
+    $('#results-number').text(`(Found ${results.data.length} Trails)`);
+
+
+    $('#loading').children().remove();
+
+    $('#results-container').slideDown(500);
 
     $([document.documentElement, document.body]).animate({
       scrollTop: $(".spacer").offset().top
-    }, 600)
+    }, 600);
+
   });
 
 
@@ -93,28 +101,34 @@ $(async function () {
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header text-center py-1">
-                <h5 class="modal-title display-4 my-0" id="exampleModalLabel">${result.name}</h5>
+                <h5 class="modal-title" id="exampleModalLabel">${result.name}</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
                 <div class="row">
-                    <div class="col">
+                    <div class="col-7">
                         <img src="${result.imgMedium}" class="rounded img-fluid" alt="...">
                     </div>
-                    <div class="col">
+                    <div class="col-5">
                         <blockquote class="blockquote font-italic">
                           <p class="mb-0">${result.summary}</p>
                         </blockquote>
                         <hr>
-                        <p class="lead">Location: ${result.location}</p>
-                        <p class="lead">Length: ${result.length} miles</p>
-                        <small>
+                        <ul class="ml-0">
+                          <li>Location: ${result.location}</li>
+                          <li>Length: ${result.length} miles</li>
+                          <li>Difficulty: ${result.difficulty[0]}</li>
+                          <li>
+                            <small>
                             <a target="_blank" href="https://www.hikingproject.com/trail/${result.id}/${result.name}">
-                              (more info about this hike)
+                              (...more info about this trail)
                             </a>
-                        </small>
+                            </small>
+                          </li>
+                        <ul>
+                        
                     </div>
                 </div>
             </div>

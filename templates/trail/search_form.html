@@ -30,7 +30,6 @@
                         {% for error in field.errors %}
                         <span class="form-text text-danger">{{ error }}</span>
                         {% endfor %}
-
                     </p>
                 </div>
 
@@ -50,6 +49,7 @@
             <button class="btn btn-block btn-lg btn-success mt-2" type="submit">Search</button>
         </form>
     </div>
+    <div id="loading" class="text-center mt-2"></div>
 </div>
 
 <!-- This should be changed -->
@@ -57,7 +57,7 @@
 
 <div id="results-container" class="container hidden">
     <h1 class="display-2">Results</h1>
-    <small id="results-number"></small>
+    <small id="results-number" class="ml-1"></small>
 
     <div id="search-results" class="list-group">
 
