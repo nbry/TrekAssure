@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, IntegerField, SelectField, PasswordField, BooleanField
+from wtforms import StringField, IntegerField, SelectField, PasswordField, BooleanField, HiddenField
 from wtforms.validators import InputRequired, Length, Email
 
 choices = [10, 20, 30, 40, 50, 100]
@@ -9,7 +9,7 @@ class TrailSearchForm(FlaskForm):
     """ Form for searching for trails """
 
     place_search = StringField('Search Place', validators=[InputRequired()])
-    radius = SelectField('Within', validators=[
+    radius = SelectField('Search Radius', validators=[
                          InputRequired()], choices=[(c, str(c) + ' miles') for c in choices])
 
 
@@ -18,10 +18,6 @@ class SecureHikeForm(FlaskForm):
 
     home_address = StringField(
         'Home Address', validators=[InputRequired()])
-    # hospital = BooleanField('hospital')
-    # gas_station = BooleanField('gas station')
-    # pharmacy = BooleanField('pharmacy')
-    # police_station = BooleanField('police station')
 
 
 class UserSignupForm(FlaskForm):

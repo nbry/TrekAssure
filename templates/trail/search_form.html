@@ -13,9 +13,9 @@
 
         <form id="search-trail-form" class="form-group">
             <div class="row">
-                {{ form.hidden_tag() }}
+                {{ form_t.hidden_tag() }}
 
-                {% for field in form
+                {% for field in form_t
                if field.widget.input_type != 'hidden' %}
                 {% if field.id == 'place_search' %}
                 <div class="col">
@@ -26,7 +26,7 @@
                             data-content="There are thousands of trails in the US. Enter the park name or zip code of the trail you chose, and we'll do our best to pinpoint it!">
                             <i class="far fa-question-circle"></i>
                         </a>
-                        {{ field(id="place-search-input", class_='form-control', placeholder="Park Name, City, Zip Code") }}
+                        {{ field(id="place-search-input", class_='form-control m-search', placeholder="Park Name, City, Zip Code") }}
                         {% for error in field.errors %}
                         <span class="form-text text-danger">{{ error }}</span>
                         {% endfor %}
@@ -52,7 +52,7 @@
     <div id="loading" class="text-center mt-2"></div>
 </div>
 
-<!-- This should be changed -->
+
 <div class="spacer"></div>
 
 
@@ -62,6 +62,7 @@
     <small id="results-number" class="ml-1">(Found {{ results|length }} Trails)</small>
 
     <div id="search-results" class="list-group">
+
         {% for result in results %}
         <a href="#" class="list-group-item list-group-item-action mb-1" data-toggle="modal"
             data-target="#modal-{{result.id}}">
@@ -73,20 +74,22 @@
             <small>Rating: {{result.stars}} out of 5 ({{result.starVotes}})</small>
         </a>
 
-        <div class="modal fade" id="modal-{{result.id}}" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
+        <div class="modal fade" id="modal-{{result.id}}" tabindex="-1" aria-labelledby="ModalLabel-{{result.id}}"
+            aria-hidden="true">
             <div class="modal-dialog modal-lg modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header text-center py-1">
-                        <h5 class="modal-title" id="ModalLabel">{{result.name}}</h5>
+                        <h5 class="modal-title" id="ModalLabel-{{result.id}}">{{result.name}}</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <div class="modal-body d-flex">
-                        <div class="row">
+                    <div id="info-modal-target-{{result.id}}" data-target-id="{{result.id}}" class=" modal-body">
+                        <div class="trail-modal-info row">
                             <div class="col-7">
                                 <img src="{{result.imgMedium}}" class="rounded img-fluid" alt="...">
                             </div>
+
                             <div class="col-5">
                                 <blockquote class="blockquote font-italic">
                                     <p class="mb-0">{{result.summary}}</p>
@@ -104,15 +107,14 @@
                                             </a>
                                         </small>
                                     </li>
-                                    <ul>
-
+                                </ul>
                             </div>
                         </div>
                     </div>
-                    <div class="modal-footer justify-content-center">
-                        <p class="lead mr-5">Is this your hike?</p>
-                        <a href="/trails/{{result.id}}/secure" class="btn btn-success">Yes</a>
-                        <button type="button" class="btn btn-danger" data-dismiss="modal">No</button>
+                    <div class="modal-footer justify-content-center trail-modal-info">
+                        <p class="lead mr-3">Is this your hike?</p>
+                        <a id="{{result.id}}" type="button" class="open-secure btn btn-lg btn-success mr-3">Yes</a>
+                        <button type="button" class="btn btn-lg btn-danger" data-dismiss="modal">No</button>
                     </div>
                 </div>
             </div>
@@ -131,6 +133,35 @@
     </div>
 </div>
 {% endif %}
+
+<div id="secure-form" class="secure-form hidden justify-content-center">
+    <form id="secure-form-target" class="form-group" method="POST">
+        <div class="form-group">
+            {{ form_s.hidden_tag() }}
+            {% for field in form_s if field.widget.input_type != 'hidden' %}
+            {{ field.label(class="text-align-left")}}
+            {{ field(class_="form-control m-search", placeholder="Home Address") }}
+            {% for error in field.errors %}
+            <span class="form-text text-danger">{{ error }}</span>
+            {% endfor %}
+            {% endfor %}
+            <button type="submit" class="btn btn-lg btn-success mt-3">Secure
+                This Hike
+            </button>
+            <a class="close-secure btn btn-lg mt-3 ml-3 btn-warning">
+                Go Back
+            </a>
+    </form>
+    <hr>
+    <p>
+        TrekAssure is designed to give you a set of static directions for the journey
+        back home.
+    </p>
+    <p>
+        Enter the address of your home or whatever location you are returning to after
+        your day of hiking
+    </p>
+</div>
 
 
 {% endblock %}

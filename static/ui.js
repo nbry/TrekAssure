@@ -3,16 +3,11 @@ $(async function () {
 
   const $searchTrailForm = $('#search-trail-form')
   const $searchPlace = $("#place-search-input")
-  const $within = $("#radius")
+  const $radius = $("#radius")
 
   // m_key is mapquest API key
+  
 
-  if ($('#place-search-input')[0]) {
-    placeSearch({
-      key: m_key,
-      container: document.querySelector('#place-search-input')
-    });
-  }
 
   // *****************
   // GENERAL UI AND POPOVERS
@@ -40,6 +35,15 @@ $(async function () {
     $('#dimmer').removeClass('body-shadow');
   });
 
+  if ($("span.alert")) {
+    setTimeout(function () {
+      $("span.alert").fadeOut(800);
+    }, 2000)
+  };
+
+  applyOpenCloseSecureForm();
+  applyMapquestSearchSDK()
+
 
   // *****************
   // TRAIL SEARCH FORM UI
@@ -47,10 +51,11 @@ $(async function () {
 
   $searchTrailForm.on("submit", async function (event) {
     event.preventDefault();
-    $('#loading').append($(`<i class="far fa-compass fa-5x fa-spin"></i>`))
+    $('#loading').append($(`<i class="far fa-compass fa-5x fa-spin mt-3"></i>`))
+    $('#results-container').fadeOut();
 
     // TREKASSURE API call to get results and append:
-    const results = await SearchTrailList.getTrails($searchPlace.val(), $within.val());
+    const results = await SearchTrailList.getTrails($searchPlace.val(), $radius.val());
     $('#search-results').children().remove();
     for (let result of results.data) {
       const resultDiv = generateResultHTML(result);
@@ -58,14 +63,18 @@ $(async function () {
     };
 
     $('#results-number').text(`(Found ${results.data.length} Trails)`);
+
+    applyOpenCloseSecureForm();
+    applyMapquestSearchSDK()
+
     $('#loading').children().remove();
-    $('#results-container').slideDown(500);
+    $('#results-container').slideDown(800);
     $([document.documentElement, document.body]).animate({
       scrollTop: $(".spacer").offset().top
-    }, 600);
+    }, 800);
 
     // TREKASSURE API call to store search result to database
-    const search = await SearchTrailList.storeTrailSearch(results.data, $searchPlace.val(), $within.val());
+    const search = await SearchTrailList.storeTrailSearch(results.data, $searchPlace.val(), $radius.val());
 
   });
 
@@ -75,9 +84,54 @@ $(async function () {
   // VARIOUS FUNCTIONS
   // *****************
 
+  function applyOpenCloseSecureForm() {
+    if ($('.open-secure')) {
+      $('.open-secure').on("click", function (e) {
+        $('.trail-modal-info').hide();
+        $('#secure-form').appendTo($(`#info-modal-target-${e.currentTarget.id}`))
+        $('#secure-form').addClass('d-flex').fadeIn();
+        $('#secure-form-target').attr('action', `/trails/${e.currentTarget.id}/secure`);
+      });
+
+      $('.close-secure').on("click", function () {
+        $('.trail-modal-info').fadeIn();
+        $('#secure-form').hide().removeClass('d-flex');
+      });
+
+      $('.modal').on('hide.bs.modal', function (e) {
+        setTimeout(function () {
+          $('#secure-form').hide().removeClass('d-flex');
+          $('.trail-modal-info').fadeIn();
+        }, 200);
+      });
+    }
+  };
+
+  function applyMapquestSearchSDK() {
+    if ($('#place-search-input')[0]) {
+      placeSearch({
+        key: m_key,
+        container: document.querySelector('#place-search-input')
+      });
+    };
+
+    if ($('#home_address')[0]) {
+      placeSearch({
+        key: m_key,
+        container: document.querySelector('#home_address')
+      });
+    }
+  };
+
+
+
+
+  // *****************
+  // GENERATE TRAIL RESULT HTML
+  // *****************
 
   function generateResultHTML(result) {
-    let resultMarkup;
+    let resultsMarkup;
 
     if (result.imgMedium === "") {
       result.imgMedium = "/static/images/no-image.png"
@@ -92,58 +146,57 @@ $(async function () {
         <small>${result.difficulty[0]}</small>
     </div>
     <p class="mb-1">${result.summary}</p>
-    <small>Rating: ${result.stars} out of 5 (${result.starVotes})</small>
+    <small>Rating: ${result.stars} out of 5 (${result.starVotes}})</small>
 </a>
 
-<div class="modal fade" id="modal-${result.id}" tabindex="-1" aria-labelledby="ModalLabel"
+<div class="modal fade" id="modal-${result.id}" tabindex="-1" aria-labelledby="ModalLabel-${result.id}"
     aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header text-center py-1">
-                <h5 class="modal-title" id="ModalLabel">${result.name}</h5>
+                <h5 class="modal-title" id="ModalLabel-${result.id}">${result.name}</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body">
-                <div class="row">
+            <div id="info-modal-target-${result.id}" data-target-id="${result.id}" class=" modal-body">
+                <div class="trail-modal-info row">
                     <div class="col-7">
                         <img src="${result.imgMedium}" class="rounded img-fluid" alt="...">
                     </div>
+
                     <div class="col-5">
                         <blockquote class="blockquote font-italic">
-                          <p class="mb-0">${result.summary}</p>
+                            <p class="mb-0">${result.summary}</p>
                         </blockquote>
                         <hr>
                         <ul class="ml-0 p-1">
-                          <li>Location: ${result.location}</li>
-                          <li>Length: ${result.length} miles</li>
-                          <li>Difficulty: ${result.difficulty[0]}</li>
-                          <li>
-                            <small>
-                            <a target="_blank" href="https://www.hikingproject.com/trail/${result.id}/${result.name}">
-                              (...more info about this trail)
-                            </a>
-                            </small>
-                          </li>
-                        <ul>
-                        
+                            <li>${result.location}</li>
+                            <li>${result.length}} miles</li>
+                            <li>Difficulty: ${result.difficulty[0]}</li>
+                            <li>
+                                <small>
+                                    <a target="_blank"
+                                        href="https://www.hikingproject.com/trail/${result.id}/${result.name}}">
+                                        (...more info about this trail)
+                                    </a>
+                                </small>
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </div>
-            <div class="modal-footer justify-content-center">
-                <p class="lead mr-5">Is this your hike?</p>
-                <a href="/trails/${result.id}/secure" class="btn btn-success">Yes</a>
-                <button type="button" class="btn btn-danger" data-dismiss="modal">No</button>
-
+            <div class="modal-footer justify-content-center trail-modal-info">
+                <p class="lead mr-3">Is this your hike?</p>
+                <a id="${result.id}" type="button" class="open-secure btn btn-lg btn-success mr-3">Yes</a>
+                <button type="button" class="btn btn-lg btn-danger" data-dismiss="modal">No</button>
             </div>
         </div>
     </div>
-</div>
-    
-`);
+</div>`);
 
     return resultsMarkup
-  }
+  };
+
 
 });

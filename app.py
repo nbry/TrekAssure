@@ -4,7 +4,7 @@ from flask import Flask, render_template, redirect, session, flash, g, request, 
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 
-from forms import TrailSearchForm, SecureHikeForm, UserSignupForm, LoginForm
+from forms import TrailSearchForm, UserSignupForm, LoginForm, SecureHikeForm
 from models import db, connect_db, User, TrailsSearch
 from secrets import m_key, h_key
 from functions import (search_for_trails, get_trail, get_conditions,
@@ -38,19 +38,24 @@ connect_db(app)
 
 @app.before_request
 def add_user_to_g():
-    """If we're logged in, add curr user to Flask global."""
+    """ Handling of stored data for a user's session """
 
+    # store user in g
     if CURR_USER_KEY in session:
         g.user = User.query.get(session[CURR_USER_KEY])
 
     else:
         g.user = None
 
+    # store their last trail search in g
     if SEARCH_ID in session:
         g.search = TrailsSearch.query.get(session[SEARCH_ID])
 
     else:
         g.search = None
+
+    # store their last secured trail in g
+    
 
 
 def do_login(user):
@@ -75,7 +80,7 @@ def home_page():
     return render_template("extends.html")
 
 # *****************************
-# TREKASSURE "TRAIL SEARCH" REQUEST HANDLING
+# TREKASSURE "TRAIL SEARCH" DATA REQUEST HANDLING
 # *****************************
 
 
@@ -138,13 +143,13 @@ def refresh_trails():
 def show_search_results():
     """ Render a form that shows "Find Your Trail" form """
 
-    form = TrailSearchForm()
-
+    form_t = TrailSearchForm()
+    form_s = SecureHikeForm()
     if SEARCH_ID in session:
-        return render_template("/trail/search_form.html", form=form, results=g.search.data)
+        return render_template("/trail/search_form.html", form_t=form_t, form_s=form_s, results=g.search.data)
 
     else:
-        return render_template("/trail/search_form.html", form=form, results=None)
+        return render_template("/trail/search_form.html", form_t=form_t, form_s=form_s, results=None)
 
 
 @app.route('/trails/<int:trail_id>')
@@ -158,27 +163,23 @@ def show_trail(trail_id):
     return render_template('/trail/trail_info.html', result=trail)
 
 
-@app.route('/trails/<int:trail_id>/secure', methods=['GET', 'POST'])
+@app.route('/trails/<int:trail_id>/secure', methods=['POST'])
 def secure_hike(trail_id):
-    """ Render page that shows a form to sign in, or continue as guest.
-    As a guest, user can input starting address and preferences to request info.
-    Signed in Users will get results based on their preferences """
+    """ Process the POST route for securing a trial. Trail ID should be
+    captured on a click event written in javascript """
 
-    form = SecureHikeForm()
-    # WORK IN PROGRESS BELOW:
-    # if session['CURR_USER']:
-    #     return redirect('/')
+    form_s = SecureHikeForm()
 
-    if form.validate_on_submit():
-        home_address = form.home_address.data
+    if form_s.validate_on_submit():
+        home_address = form_s.home_address.data
         trail = get_trail(h_key, trail_id)
-
         secured_trip = secure_trip(m_key, trail, home_address)
 
         return render_template('/trail/secure_results.html', secured_trip=secured_trip, trail=trail)
 
     else:
-        return render_template('/trail/secure_form.html', form=form, trail_id=trail_id)
+        form_t = TrailSearchForm()
+        return render_template('/trail/search_form.html', form_t=form_t, form_s=form_s, trail_id=trail_id)
 
 
 # *****************************
