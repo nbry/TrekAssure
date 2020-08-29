@@ -34,7 +34,7 @@
                 {% else %}
                 <li>
                     <a class="nav-link" href="/users/{{ g.user.id }}">
-                        <i class="fas fa-user fa-sm"></i> {{g.user.username}}
+                        <i class="fas fa-user fa-sm"></i> <span class="current-user-name">{{g.user.username}}</span>
                     </a>
                 </li>
                 <li class="nav-item">
@@ -65,8 +65,8 @@
         crossorigin="anonymous"></script>
     <script src="https://api.mqcdn.com/sdk/place-search-js/v1.0.0/place-search.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.js"></script>
-    <script src="/static/api-classes.js"></script>
-    <script src="/static/ui.js"></script>
+    <script src="/static/js/api-classes.js"></script>
+    <script src="/static/js/ui.js"></script>
 
     {% block scripts %}{% endblock %}
 </body>

@@ -6,6 +6,16 @@
 <div class="container">
     <div class="pamphlet mx-auto my-3">
         <h1 class="display-4 text-center">After-The-Hike Pamphlet</h1>
+        <div class="row">
+            <div class="col ml-5">
+                <a id="text-file-pamphlet" class="btn btn-block text-white btn-success" >Download Pamphlet Text
+                    File</a>
+            </div>
+            <div class="col mr-5">
+                <a id="email-pamphlet" class="btn btn-block text-white btn-success" >Email Pamphlet</a>
+            </div>
+        </div>
+        <hr>
         <div class="row d-flex justify-content-center">
             <!-- Link to directions home -->
             <div class="list-group list-group-horizontal mb-3" id="list-tab" role="tablist">
@@ -32,14 +42,22 @@
                         aria-labelledby="directions-home">
                         <div class="text-center">
                             <p class="lead text-capitalize">Your Journey Home From</p>
-                            <p class="lead">"{{trail.name}}"</p>
+                            <p class="lead trail-name">"{{trail.name}}"</p>
                         </div>
                         <hr>
-                        <p>Directions to <b>{{secured_trip['home']['info']}}</b>
-                            ({{secured_trip['home']['route']['route_info']['distance']}} miles away)</p>
+                        <p>Directions to
+                            <span class="home-name">
+                                <b>{{secured_trip['home']['info']}}</b>
+                                ({{secured_trip['home']['route']['route_info']['distance']}} miles away)
+                            </span>
+                        </p>
                         <ol>
                             {% for direction in secured_trip['home']['route']['directions'] %}
-                            <li>{{ direction['narrative'] }}
+                            <li>
+                                <span class="narrative">
+                                    {{ direction['narrative'] }}
+                                    <div class="line-breaker"></div>
+                                </span>
                                 <div>
                                     <small class="text-muted">({{direction['distance']}} miles)</small>
                                 </div>
@@ -55,11 +73,15 @@
                         aria-labelledby="directions-{{destination.replace(' ', '')}}">
                         <div class="text-center">
                             <p class="lead text-capitalize">Nearest {{destination}}: </p>
-                            <p><b>{{secured_trip[destination]['info']['name']}}</b></p>
-                            <p class="font-italic mb-0">
+                            <p>
+                                <b>
+                                    {{secured_trip[destination]['info']['name']}}
+                                </b>
+                            </p>
+                            <p class="font-italic mb-0 {{destination.replace(' ', '')}}-address1">
                                 {{secured_trip[destination]['info']['place']['properties']['street']}}
                             </p>
-                            <p class="font-italic mt-0">
+                            <p class="font-italic mt-0 {{destination.replace(' ', '')}}-address2">
                                 {{secured_trip[destination]['info']['place']['properties']['city']}},
                                 {{secured_trip[destination]['info']['place']['properties']['stateCode']}}
                                 {{secured_trip[destination]['info']['place']['properties']['postalCode']}}
@@ -67,12 +89,20 @@
 
                         </div>
                         <hr>
-                        <p>Directions to <b>{{secured_trip[destination]['info']['name']}}</b>
-                            ({{secured_trip[destination]['route']['route_info']['distance']}} miles away)</p>
+                        <p>Directions to
+                            <span class="{{destination.replace(' ', '')}}-name">
+                                <b>{{secured_trip[destination]['info']['name']}}</b>
+                                ({{secured_trip[destination]['route']['route_info']['distance']}} miles away)
+                            </span>
+                        </p>
 
                         <ol>
                             {% for direction in secured_trip[destination]['route']['directions'] %}
-                            <li>{{ direction['narrative'] }}
+                            <li>
+                                <span class=" narrative">
+                                    {{ direction['narrative'] }}
+                                    <div class="line-breaker"></div>
+                                </span>
                                 <div>
                                     <small class="text-muted">({{direction['distance']}} miles)</small>
                                 </div>
@@ -93,6 +123,7 @@
 
 {% block scripts %}
 
-<script src="/static/pamphlet-ui.js"></script>
+<script src="/static/js/pamphlet-ui.js"></script>
+<script src="/static/js/pamphlet-print.js"></script>
 
 {% endblock %}

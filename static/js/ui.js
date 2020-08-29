@@ -6,7 +6,7 @@ $(async function () {
   const $radius = $("#radius")
 
   // m_key is mapquest API key
-  
+
 
 
   // *****************
@@ -188,7 +188,7 @@ $(async function () {
                         <hr>
                         <ul class="ml-0 p-1">
                             <li>${result.location}</li>
-                            <li>${result.length}} miles</li>
+                            <li>${result.length} miles</li>
                             <li>Difficulty: ${result.difficulty[0]}</li>
                             <li>
                                 <small>
