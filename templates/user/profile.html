@@ -1,9 +1,12 @@
 {% extends "base.html" %}
 
-{% block title %}{% endblock %}
+{% block title %}{{user.username}}'s Account{% endblock %}
 
 {% block content %}
-<h1>Testing!</h1>
+<div class="container">
+    <h1 class="display-4">{{ user.username }}'s Account Info</h1>
 
+
+</div>
 
 {% endblock %}

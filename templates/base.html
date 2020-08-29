@@ -33,7 +33,7 @@
                 <li><a class="nav-link pl-3 text-light" href="/login">Log In</a></li>
                 {% else %}
                 <li>
-                    <a class="nav-link" href="#">
+                    <a class="nav-link" href="/users/{{ g.user.id }}">
                         <i class="fas fa-user fa-sm"></i> {{g.user.username}}
                     </a>
                 </li>
@@ -67,7 +67,7 @@
     <script src="https://unpkg.com/axios/dist/axios.js"></script>
     <script src="/static/api-classes.js"></script>
     <script src="/static/ui.js"></script>
-    
+
     {% block scripts %}{% endblock %}
 </body>
 

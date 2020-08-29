@@ -6,7 +6,6 @@ $(async function () {
   const $radius = $("#radius")
 
   // m_key is mapquest API key
-  
 
 
   // *****************
@@ -37,8 +36,9 @@ $(async function () {
 
   // Secure form spinner
   if ($("#secure-form-btn")) {
-    $("#secure-form-btn").on("click", function () {
-      $("#secure-loading").append($(`<i class="fas fa-spinner fa-3x fa-spin dark-icon"></i>`));
+    $("#secure-form").on("submit", function () {
+      $("#secure-loading").children().remove();
+      $("#secure-loading").append($(`<i class="fas fa-compass fa-3x fa-spin"></i>`));
     })
   };
 
@@ -55,6 +55,9 @@ $(async function () {
     $('#loading').append($(`<i class="far fa-compass fa-5x fa-spin mt-3 light-icon"></i>`))
     $('#results-container').fadeOut();
 
+    // Ensure Secure Form Modal is moved elsewhere and hidden
+    $('#secure-form').appendTo($("#outside-target"));
+
     // TREKASSURE API call to get results and append:
     const results = await SearchTrailList.getTrails($searchPlace.val(), $radius.val());
     $('#search-results').children().remove();
@@ -65,7 +68,7 @@ $(async function () {
 
     $('#results-number').text(`(Found ${results.data.length} Trails)`);
 
-    applyOpenCloseSecureForm();
+    applyOpenCloseSecureForm()
     applyMapquestSearchSDK()
 
     $('#loading').children().remove();

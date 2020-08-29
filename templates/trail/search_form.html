@@ -46,7 +46,7 @@
                 {% endif %}
                 {% endfor %}
             </div>
-            <button class="btn btn-block btn-lg btn-success mt-2" type="submit">Search</button>
+            <button class="btn btn-block btn-lg btn-success mt-2" type="submit">Get Trails</button>
         </form>
     </div>
     <div id="loading" class="text-center mt-2"></div>
@@ -58,7 +58,7 @@
 
 {% if results %}
 <div id="results-container" class="container">
-    <h1 class="display-2">Results</h1>
+    <h1 class="display-3 text-center">Search Results</h1>
     <small id="results-number" class="ml-1">(Found {{ results|length }} Trails)</small>
 
     <div id="search-results" class="list-group">
@@ -84,7 +84,8 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <div id="info-modal-target-{{result.id}}" data-target-id="{{result.id}}" class=" modal-body">
+                    <div id="info-modal-target-{{result.id}}" data-target-id="{{result.id}}"
+                        class=" modal-body container">
                         <div class="trail-modal-info row">
                             <div class="col-7">
                                 <img src="{{result.imgMedium}}" class="rounded img-fluid" alt="...">
@@ -134,35 +135,54 @@
 </div>
 {% endif %}
 
-<div id="secure-form" class="secure-form hidden justify-content-center">
-    <form id="secure-form-target" class="form-group" method="POST">
-        <div class="form-group">
-            {{ form_s.hidden_tag() }}
-            {% for field in form_s if field.widget.input_type != 'hidden' %}
-            {{ field.label(class="text-align-left")}}
-            {{ field(class_="form-control m-search", placeholder="Home Address") }}
-            {% for error in field.errors %}
-            <span class="form-text text-danger">{{ error }}</span>
-            {% endfor %}
-            {% endfor %}
-            <button id="secure-form-btn" type="submit" class="btn btn-lg btn-success mt-3">Secure
-                This Hike
-            </button>
-            <a class="close-secure btn btn-lg mt-3 ml-3 btn-warning">
-                Go Back
-            </a>
-            <span id="secure-loading" class="m-3 position-absolute"></span>
-    </form>
-    <hr>
-    <p>
-        TrekAssure is designed to give you a set of static directions for the journey
-        back home.
-    </p>
-    <p>
-        Enter the address of your home or whatever location you are returning to after
-        your day of hiking
-    </p>
-</div>
-
+<section id="outside-target" class="hidden">
+    <div id="secure-form" class="secure-form hidden row ">
+        <div class="col">
+            <div class="row justify-content-center">
+                <h2>Your "After-The-Hike" Pamphlet</h2>
+                <p class="px-5 text-center">
+                    TrekAssure is designed to give you a pamphlet of static directions
+                    for the journey back home. Enter the address of whatever
+                    location you are returning to after your day of hiking. Your home, or
+                    perhaps maybe something close by?
+                </p>
+                <p>
+                    <i class="fas fa-hiking fa-3x"></i>
+                    <span id="secure-loading" class="mx-4">
+                        <i class="fas fa-mountain fa-3x"></i>
+                    </span>
+                    <i class="fas fa-car fa-3x"></i>
+                </p>
+            </div>
+            <hr>
+            <div class="row justify-content-center text-align-center">
+                <form id="secure-form-target" class="form-group col" method="POST">
+                    <div class="form-group px-3 row">
+                        <div class="col">
+                            {{ form_s.hidden_tag() }}
+                            {% for field in form_s if field.widget.input_type != 'hidden' %}
+                            {{ field.label(class="text-align-left")}}
+                            {{ field(class_="form-control m-search", placeholder="Home Address") }}
+                            {% for error in field.errors %}
+                            <span class="form-text text-danger">{{ error }}</span>
+                            {% endfor %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col ml-3">
+                            <button id="secure-form-btn" type="submit" class="btn btn-lg btn-block btn-success mt-1">
+                                Get Pamphlet!
+                            </button>
+                        </div>
+                        <div class="col mr-3">
+                            <a class="close-secure btn btn-lg btn-block mt-1 btn-warning">Go Back</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
 
 {% endblock %}

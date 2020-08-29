@@ -174,7 +174,6 @@ def secure_hike(trail_id):
     """ Process the POST route for securing a trial. Trail ID should be
     captured on a click event written in javascript. If User made a search
     recently, they can refresh the page """
-
     form_s = SecureHikeForm()
 
     if form_s.validate_on_submit():
@@ -207,6 +206,7 @@ def secure_hike(trail_id):
 def show_secured_hike_pamphlet(user_id, pamphlet_id):
     """ Route that shows saved user pamphlets. If session user does not match user_id, 
     then redirect back to trail route. """
+
     if user_id != g.user.id:
         flash("Not authorized to view that page", "warning")
         return redirect("/trails/search")
@@ -220,6 +220,19 @@ def show_secured_hike_pamphlet(user_id, pamphlet_id):
 # *****************************
 # USER ACCOUNT ROUTES
 # *****************************
+
+
+@app.route('/users/<int:user_id>')
+def show_user_profile(user_id):
+    """ Show user profile. If session user does not match user_id, redirect to trail route """
+
+    if user_id != g.user.id:
+        flash("Not authorized to view that page", "warning")
+        return redirect("/trails/search")
+
+    user_info = User.query.get(g.user.id)
+
+    return render_template('/user/profile.html', user=user_info)
 
 
 @app.route('/signup', methods=['GET', 'POST'])
