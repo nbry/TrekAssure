@@ -2,15 +2,14 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, IntegerField, SelectField, PasswordField, BooleanField, HiddenField
 from wtforms.validators import InputRequired, Length, Email
 
-choices = [10, 20, 30, 40, 50, 100]
-
 
 class TrailSearchForm(FlaskForm):
     """ Form for searching for trails """
+    search_radius_choices = [10, 20, 30, 40, 50, 100]
 
     place_search = StringField('Search Place', validators=[InputRequired()])
     radius = SelectField('Search Radius', validators=[
-                         InputRequired()], choices=[(c, str(c) + ' miles') for c in choices])
+                         InputRequired()], choices=[(c, str(c) + ' miles') for c in search_radius_choices])
 
 
 class SecureHikeForm(FlaskForm):

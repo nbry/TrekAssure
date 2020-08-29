@@ -2,6 +2,7 @@
 
 from flask_bcrypt import Bcrypt
 from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime
 
 bcrypt = Bcrypt()
 db = SQLAlchemy()
@@ -62,3 +63,19 @@ class TrailsSearch(db.Model):
     data = db.Column(db.JSON)
 
     user = db.relationship("User", backref="searches")
+
+
+class SecuredHikePamphlet(db.Model):
+
+    __tablename__ = "pamphlets"
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_id = db.Column(db.Integer, db.ForeignKey(
+        "users.id", ondelete="cascade"), nullable=False)
+    home_destination = db.Column(db.Text, nullable=False)
+    trail_id = db.Column(db.Integer, nullable=False)
+    data = db.Column(db.JSON)
+    date_created = db.Column(
+        db.DateTime, nullable=False, default=datetime.utcnow())
+
+    user = db.relationship("User", backref="pamphlets")

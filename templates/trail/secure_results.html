@@ -4,71 +4,95 @@
 
 {% block content %}
 <div class="container">
-    <h1>The Journey Back Home from {{trail['name']}}</h1>
-
-    <div class="row">
-
-        <div class="col-4">
+    <div class="pamphlet mx-auto my-3">
+        <h1 class="display-4 text-center">After-The-Hike Pamphlet</h1>
+        <div class="row d-flex justify-content-center">
             <!-- Link to directions home -->
-            <div class="list-group" id="list-tab" role="tablist">
+            <div class="list-group list-group-horizontal mb-3" id="list-tab" role="tablist">
                 <a class="list-group-item list-group-item-action active" id="directions-home" data-toggle="list"
-                    href="#list-home-directions" role="tab" aria-controls="home">Home</a>
-            
-            <!-- Links to directions to Destinations -->
+                    href="#list-home-directions" role="tab" aria-controls="home"></a>
+
+                <!-- Links to directions to Destinations -->
                 {% for destination in secured_trip %}
                 {% if destination != 'home' %}
                 <a class="list-group-item list-group-item-action" id="directions-{{destination.replace(' ', '')}}"
                     data-toggle="list" href="#list-{{destination.replace(' ', '')}}-directions" role="tab"
-                    aria-controls="{{destination.replace(' ', '')}}">Nearest {{destination}}</a>
+                    aria-controls="{{destination.replace(' ', '')}}"></a>
                 {% endif %}
                 {%endfor %}
             </div>
         </div>
 
-        <div class="col-8">
-            <div class="tab-content" id="nav-tabContent">
+        <div class="row">
+            <div class="col">
+                <div class="tab-content" id="nav-tabContent">
 
-                <!-- List of directions home -->
-                <div class="tab-pane fade show active" id="list-home-directions" role="tabpanel"
-                    aria-labelledby="directions-home">
-                    <p>Directions to <b>{{secured_trip['home']['info']}}</b>
-                        ({{secured_trip['home']['route']['route_info']['distance']}} miles away)</p>
-                    <ol>
-                        {% for direction in secured_trip['home']['route']['directions'] %}
-                        <li>{{ direction['narrative'] }}
-                            <div>
-                                <small class="text-muted">({{direction['distance']}} miles)</small>
-                            </div>
-                        </li>
-                        {% endfor %}
-                    </ol>
+                    <!-- List of directions home -->
+                    <div class="tab-pane fade show active" id="list-home-directions" role="tabpanel"
+                        aria-labelledby="directions-home">
+                        <div class="text-center">
+                            <p class="lead text-capitalize">Your Journey Home From</p>
+                            <p class="lead">"{{trail.name}}"</p>
+                        </div>
+                        <hr>
+                        <p>Directions to <b>{{secured_trip['home']['info']}}</b>
+                            ({{secured_trip['home']['route']['route_info']['distance']}} miles away)</p>
+                        <ol>
+                            {% for direction in secured_trip['home']['route']['directions'] %}
+                            <li>{{ direction['narrative'] }}
+                                <div>
+                                    <small class="text-muted">({{direction['distance']}} miles)</small>
+                                </div>
+                            </li>
+                            {% endfor %}
+                        </ol>
+                    </div>
+
+                    <!-- List of directions to destinations -->
+                    {% for destination in secured_trip %}
+                    {% if destination != 'home' %}
+                    <div class="tab-pane fade" id="list-{{destination.replace(' ', '')}}-directions" role="tabpanel"
+                        aria-labelledby="directions-{{destination.replace(' ', '')}}">
+                        <div class="text-center">
+                            <p class="lead text-capitalize">Nearest {{destination}}: </p>
+                            <p><b>{{secured_trip[destination]['info']['name']}}</b></p>
+                            <p class="font-italic mb-0">
+                                {{secured_trip[destination]['info']['place']['properties']['street']}}
+                            </p>
+                            <p class="font-italic mt-0">
+                                {{secured_trip[destination]['info']['place']['properties']['city']}},
+                                {{secured_trip[destination]['info']['place']['properties']['stateCode']}}
+                                {{secured_trip[destination]['info']['place']['properties']['postalCode']}}
+                            </p>
+
+                        </div>
+                        <hr>
+                        <p>Directions to <b>{{secured_trip[destination]['info']['name']}}</b>
+                            ({{secured_trip[destination]['route']['route_info']['distance']}} miles away)</p>
+
+                        <ol>
+                            {% for direction in secured_trip[destination]['route']['directions'] %}
+                            <li>{{ direction['narrative'] }}
+                                <div>
+                                    <small class="text-muted">({{direction['distance']}} miles)</small>
+                                </div>
+                            </li>
+                            {% endfor %}
+                        </ol>
+                    </div>
+                    {% endif %}
+                    {%endfor %}
+
                 </div>
-
-                <!-- List of directions to destinations -->
-                {% for destination in secured_trip %}
-                {% if destination != 'home' %}
-                <div class="tab-pane fade" id="list-{{destination.replace(' ', '')}}-directions" role="tabpanel"
-                    aria-labelledby="directions-{{destination.replace(' ', '')}}">
-                    <p>Directions to <b>{{secured_trip[destination]['info']['name']}}</b>
-                        ({{secured_trip[destination]['route']['route_info']['distance']}} miles away)</p>
-
-                    <ol>
-                        {% for direction in secured_trip[destination]['route']['directions'] %}
-                        <li>{{ direction['narrative'] }}
-                            <div>
-                                <small class="text-muted">({{direction['distance']}} miles)</small>
-                            </div>
-                        </li>
-                        {% endfor %}
-                    </ol>
-                </div>
-                {% endif %}
-                {%endfor %}
-
             </div>
         </div>
     </div>
 </div>
 
+{% endblock %}
+
+{% block scripts %}
+
+<script src="/static/pamphlet-ui.js"></script>
 
 {% endblock %}

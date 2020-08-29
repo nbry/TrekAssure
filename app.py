@@ -5,7 +5,7 @@ from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 
 from forms import TrailSearchForm, UserSignupForm, LoginForm, SecureHikeForm
-from models import db, connect_db, User, TrailsSearch
+from models import db, connect_db, User, TrailsSearch, SecuredHikePamphlet
 from secrets import m_key, h_key
 from functions import (search_for_trails, get_trail, get_conditions,
                        get_geo_info, rate_difficulty, get_directions, search_for_nearest,
@@ -14,6 +14,7 @@ from functions import (search_for_trails, get_trail, get_conditions,
 CURR_USER_KEY = "curr_user"
 SEARCH_ID = "SEARCH_ID"
 FILTERED_RESULTS = "FILTERED_RESULTS"
+
 
 app = Flask(__name__)
 MQAPI_BASE_URL = 'http://www.mapquestapi.com/'
@@ -43,19 +44,14 @@ def add_user_to_g():
     # store user in g
     if CURR_USER_KEY in session:
         g.user = User.query.get(session[CURR_USER_KEY])
-
     else:
         g.user = None
 
     # store their last trail search in g
     if SEARCH_ID in session:
         g.search = TrailsSearch.query.get(session[SEARCH_ID])
-
     else:
         g.search = None
-
-    # store their last secured trail in g
-    
 
 
 def do_login(user):
@@ -65,7 +61,7 @@ def do_login(user):
 
 
 def do_logout():
-    """Logout user."""
+    """Logout user. Clear session"""
 
     if CURR_USER_KEY in session:
         del session[CURR_USER_KEY]
@@ -111,7 +107,7 @@ def store_trails():
     radius = response['data']['radius']
 
     results_to_db = TrailsSearch(
-        user_id=session[CURR_USER_KEY],
+        user_id=g.user.id,
         place=place,
         radius=radius,
         data=results)
@@ -155,18 +151,29 @@ def show_search_results():
 @app.route('/trails/<int:trail_id>')
 def show_trail(trail_id):
     """ Render a page that shows detail about a trail, should the user manually search by id.
-    This is not an explicit feature of TrekAssure, more of a quality of life consideration """
+    Also serves as the default route if user tampers with user/{id}/pamphlets URL.
+    This route is not an explicit feature of TrekAssure. It's more of a quality of life consideration """
 
-    trail = get_trail(h_key, trail_id)
-    trail['difficulty'] = rate_difficulty(trail['difficulty'])
+    try:
+        trail = get_trail(h_key, trail_id)
+        trail['difficulty'] = rate_difficulty(trail['difficulty'])
 
-    return render_template('/trail/trail_info.html', result=trail)
+        return render_template('/trail/trail_info.html', result=trail)
+
+    except:
+        flash("Trail not found", "danger")
+        return redirect('/trails/search')
+
+# *****************************
+# "SECURED HIKE PAMPHLET" ROUTES
+# *****************************
 
 
-@app.route('/trails/<int:trail_id>/secure', methods=['POST'])
+@app.route('/trails/<int:trail_id>/secure', methods=['GET', 'POST'])
 def secure_hike(trail_id):
     """ Process the POST route for securing a trial. Trail ID should be
-    captured on a click event written in javascript """
+    captured on a click event written in javascript. If User made a search
+    recently, they can refresh the page """
 
     form_s = SecureHikeForm()
 
@@ -175,7 +182,17 @@ def secure_hike(trail_id):
         trail = get_trail(h_key, trail_id)
         secured_trip = secure_trip(m_key, trail, home_address)
 
-        return render_template('/trail/secure_results.html', secured_trip=secured_trip, trail=trail)
+        pamphlet_to_db = SecuredHikePamphlet(
+            user_id=g.user.id,
+            home_destination=home_address,
+            trail_id=trail_id,
+            data=secured_trip
+        )
+        db.session.add(pamphlet_to_db)
+        db.session.commit()
+
+        flash("Secured your hike!", "success")
+        return redirect(f'/users/{g.user.id}/pamphlets/{pamphlet_to_db.id}')
 
     else:
         form_t = TrailSearchForm()
@@ -183,8 +200,27 @@ def secure_hike(trail_id):
 
 
 # *****************************
-# "USER"  ROUTES
+# USER PAMPHLET ROUTE
 # *****************************
+
+@app.route('/users/<int:user_id>/pamphlets/<int:pamphlet_id>')
+def show_secured_hike_pamphlet(user_id, pamphlet_id):
+    """ Route that shows saved user pamphlets. If session user does not match user_id, 
+    then redirect back to trail route. """
+    if user_id != g.user.id:
+        flash("Not authorized to view that page", "warning")
+        return redirect("/trails/search")
+
+    pamphlet = SecuredHikePamphlet.query.get_or_404(pamphlet_id)
+    secured_trip = pamphlet.data
+    trail = get_trail(h_key, pamphlet.trail_id)
+
+    return render_template('/trail/secure_results.html', secured_trip=secured_trip, trail=trail)
+
+# *****************************
+# USER ACCOUNT ROUTES
+# *****************************
+
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup_user():

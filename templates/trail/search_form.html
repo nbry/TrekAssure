@@ -145,12 +145,13 @@
             <span class="form-text text-danger">{{ error }}</span>
             {% endfor %}
             {% endfor %}
-            <button type="submit" class="btn btn-lg btn-success mt-3">Secure
+            <button id="secure-form-btn" type="submit" class="btn btn-lg btn-success mt-3">Secure
                 This Hike
             </button>
             <a class="close-secure btn btn-lg mt-3 ml-3 btn-warning">
                 Go Back
             </a>
+            <span id="secure-loading" class="m-3 position-absolute"></span>
     </form>
     <hr>
     <p>

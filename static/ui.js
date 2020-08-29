@@ -13,6 +13,7 @@ $(async function () {
   // GENERAL UI AND POPOVERS
   // *****************
 
+  // POPOVER
   $(function () {
     $('[data-toggle="popover"]').popover()
   });
@@ -27,18 +28,18 @@ $(async function () {
     trigger: 'focus'
   });
 
-  $('#search-help').on("click", function () {
-    $('#dimmer').addClass('body-shadow');
-  });
-
-  $("body").on("click", function () {
-    $('#dimmer').removeClass('body-shadow');
-  });
-
+  // Flash messages fade out automatically
   if ($("span.alert")) {
     setTimeout(function () {
       $("span.alert").fadeOut(800);
-    }, 2000)
+    }, 2500)
+  };
+
+  // Secure form spinner
+  if ($("#secure-form-btn")) {
+    $("#secure-form-btn").on("click", function () {
+      $("#secure-loading").append($(`<i class="fas fa-spinner fa-3x fa-spin dark-icon"></i>`));
+    })
   };
 
   applyOpenCloseSecureForm();
@@ -51,7 +52,7 @@ $(async function () {
 
   $searchTrailForm.on("submit", async function (event) {
     event.preventDefault();
-    $('#loading').append($(`<i class="far fa-compass fa-5x fa-spin mt-3"></i>`))
+    $('#loading').append($(`<i class="far fa-compass fa-5x fa-spin mt-3 light-icon"></i>`))
     $('#results-container').fadeOut();
 
     // TREKASSURE API call to get results and append:
@@ -108,6 +109,10 @@ $(async function () {
   };
 
   function applyMapquestSearchSDK() {
+    if (!m_key) {
+      return
+    };
+
     if ($('#place-search-input')[0]) {
       placeSearch({
         key: m_key,
