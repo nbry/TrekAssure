@@ -3,25 +3,31 @@
 {% block title %}Sign Up{% endblock %}
 
 {% block content %}
-<div class="container">
-    <h1>Register For An Account</h1>
+<div class="container d-flex justify-content-center">
+    <div class="register-form">
+        <h1 class="display-2">Sign Up</h1>
 
-    <form method="POST">
-        {{ form.hidden_tag() }}
-        {% for field in form if field.widget.input_type != 'hidden' %}
-        <div class="form-group">
-            {{field.label}}
-            {{field(class_="form-control")}}
-            {% for err in field.errors %}
-            <small class="form-text text-danger">
-                {{err}}
-            </small>
+        <form method="POST">
+            {{ form.hidden_tag() }}
+            {% for field in form if field.widget.input_type != 'hidden' %}
+            <div class="form-group">
+                {{ field.label }}
+                {{ field(class_='form-control') }}
+                {% for error in field.errors %}
+                <small class="form-text text-danger">
+                    {{error}}
+                </small>
+                {% endfor %}
+            </div>
             {% endfor %}
-        </div>
-        {% endfor %}
-        <button class="btn btn-success btn-large">Submit</button>
-        <a href="/" class='btn btn-danger btn-large'>Go Back</a>
-    </form>
+            <button class="btn btn-success btn-lg btn-block">Create Account</button>
+        </form>
 
+        <p class="mt-3">Already have an account? <a href="/login">Log in here</a></p>
+    </div>
 </div>
+
+<div class="body-shadow"></div>
+
+
 {% endblock %}

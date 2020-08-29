@@ -24,7 +24,7 @@ class UserSignupForm(FlaskForm):
         min=6, max=15, message="Username must be 6-15 characters long")])
     password = PasswordField("Password", validators=[
                              InputRequired(), Length(min=6)])
-    email = StringField("Email (optional)", validators=[
+    email = StringField("Email", validators=[
                         Email("Please enter a valid email address")])
     address = StringField("Home Address (optional)")
 

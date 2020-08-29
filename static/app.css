@@ -10,16 +10,31 @@
     height: 50px;
 }
 
-/* .body-shadow {
+/* REGISTRATION*/
+
+/* ***************************** */
+
+.register-form {
+    background: white;
+    width: 100%;
+    max-width: 500px;
+    border: 1px solid rgb(172, 172, 172);
+    border-radius: 10px;
+    margin-top: 30px;
+    padding: 20px;
+    text-align: center;
+    z-index: 3;
+}
+
+.body-shadow {
     position: fixed;
     left: 0;
     right: 0;
     bottom: 0;
     top: 0;
     background-color: rgba(19, 19, 19, 0.699);
-    transition: 500ms;
     z-index: 2;
-} */
+}
 
 /* SEARCH TRAIL PAGE */
 
