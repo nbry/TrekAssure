@@ -6,6 +6,7 @@ $(async function () {
   const $radius = $("#radius")
 
   // m_key is mapquest API key
+  
 
 
   // *****************
@@ -60,19 +61,26 @@ $(async function () {
 
     // TREKASSURE API call to get results and append:
     const results = await SearchTrailList.getTrails($searchPlace.val(), $radius.val());
+
     $('#search-results').children().remove();
-    for (let result of results.data) {
-      const resultDiv = generateResultHTML(result);
-      $('#search-results').append(resultDiv);
-    };
 
-    $('#results-number').text(`(Found ${results.data.length} Trails)`);
+    if (results.data.length === 0) {
+      $('#search-results').append($zeroResults);
+    }
+    else {
+      for (let result of results.data) {
+        const resultDiv = generateResultHTML(result);
+        $('#search-results').append(resultDiv);
+      };
 
-    applyOpenCloseSecureForm()
-    applyMapquestSearchSDK()
+      $('#results-number').text(`(Found ${results.data.length} Trails)`);
+    }
+
+    applyOpenCloseSecureForm();
+    applyMapquestSearchSDK();
 
     $('#loading').children().remove();
-    $('#results-container').slideDown(800);
+    $('#results-container').fadeIn(800);
     $([document.documentElement, document.body]).animate({
       scrollTop: $(".spacer").offset().top
     }, 800);
@@ -206,5 +214,7 @@ $(async function () {
     return resultsMarkup
   };
 
+  const $zeroResults = $(`<p class="lead text-center">No trails found within those search parameters. 
+    Try increasing the search radius or choosing a new place altogether. Zip Codes, Park Names, and Cities work well!</p >`);
 
 });

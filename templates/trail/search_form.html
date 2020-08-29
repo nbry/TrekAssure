@@ -22,8 +22,9 @@
                     <p>
                         {{ field.label(for="place-search-input", class="text-align-left")}}
                         <a id="search-help" tabindex="0" role="button" display="hidden" data-toggle="popover"
-                            data-trigger="focus" title="Find Your Chosen Trail" data-placement="right"
-                            data-content="There are thousands of trails in the US. Enter the park name or zip code of the trail you chose, and we'll do our best to pinpoint it!">
+                            data-trigger="focus" title="Find Your Chosen Trail" data-placement="right" data-content="There are thousands of trails in the US. 
+                            Enter the park name or zip code of the trail you chose, 
+                            and we'll do our best to pinpoint it!">
                             <i class="far fa-question-circle"></i>
                         </a>
                         {{ field(id="place-search-input", class_='form-control m-search', placeholder="Park Name, City, Zip Code") }}
@@ -126,7 +127,7 @@
 
 {% else %}
 <div id="results-container" class="container hidden">
-    <h1 class="display-2">Results</h1>
+    <h1 class="display-3 text-center">Search Results</h1>
     <small id="results-number" class="ml-1"></small>
 
     <div id="search-results" class="list-group">
@@ -141,10 +142,11 @@
             <div class="row justify-content-center">
                 <h2>Your "After-The-Hike" Pamphlet</h2>
                 <p class="px-5 text-center">
-                    TrekAssure is designed to give you a pamphlet of static directions
-                    for the journey back home. Enter the address of whatever
-                    location you are returning to after your day of hiking. Your home, or
-                    perhaps maybe something close by?
+                    TrekAssure is designed to secure your journey back home. We will
+                    provide a pamphlet of static directions to your specified destination
+                    and set of directions to a few key locations (e.g. nearest gas station,
+                    pharmacy etc). Enter your home address or whatever your destination may
+                    be after your hiking adventure.
                 </p>
                 <p>
                     <i class="fas fa-hiking fa-3x"></i>
