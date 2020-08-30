@@ -105,6 +105,39 @@ function processPamphletData() {
 
 $('#text-file-pamphlet').on("click", function () {
     let pamphlet = processPamphletData();
-    let fileName = "your_pamphlet.rtf";
+    let fileName = "your_pamphlet.txt";
     saveData(pamphlet, fileName)
+})
+
+$('#email-pamphlet').on("submit", async function (evt) {
+    evt.preventDefault();
+    let pamphlet = processPamphletData();
+
+    $('#email-loading').append(`<i class="fas fa-spinner fa-spin dark-icon"></i>`)
+    const response = await Pamphlet.emailPamphlet(pamphlet,
+        this.dataset.user_id,
+        this.dataset.pamphlet_id,
+        $('#email-input').val())
+    $('#email-loading').children().remove()
+
+    if (response.data === "Sent Email!") {
+        $('#email-loading').append(`
+        <div class="alert alert-success temp" role="alert">
+            ${response.data}
+        </div>`);
+    } else {
+        $('#email-loading').append(`
+        <div class="alert alert-warning temp" role="alert">
+            ${response.data}
+        </div>`);
+    }
+
+    setTimeout(function () {
+        $('.temp').fadeOut();
+
+        if (response.data === "Sent Email!") {
+            $("#emailModal").modal('hide')
+        };
+
+    }, 1500)
 })

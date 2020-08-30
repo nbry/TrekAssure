@@ -26,3 +26,17 @@ class SearchTrailList {
         })
     }
 }
+
+class Pamphlet {
+
+    static async emailPamphlet(pamphletText, user_id, pamphlet_id, email) {
+        const response = await axios.get(`/users/${user_id}/pamphlets/${pamphlet_id}/send`,
+            {
+                params: {
+                    'pamphletText': pamphletText,
+                    'email': email
+                }
+            })
+        return response;
+    }
+}

@@ -3,10 +3,12 @@ import requests
 from flask import Flask, render_template, redirect, session, flash, g, request, jsonify
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
+from flask_mail import Mail, Message
+from email_validator import validate_email, EmailNotValidError
 
 from forms import TrailSearchForm, UserSignupForm, LoginForm, SecureHikeForm
 from models import db, connect_db, User, TrailsSearch, SecuredHikePamphlet
-from secrets import m_key, h_key
+from secrets import m_key, h_key, t_pass
 from functions import (search_for_trails, get_trail, get_conditions,
                        get_geo_info, rate_difficulty, get_directions, search_for_nearest,
                        secure_trip)
@@ -14,11 +16,19 @@ from functions import (search_for_trails, get_trail, get_conditions,
 CURR_USER_KEY = "curr_user"
 SEARCH_ID = "SEARCH_ID"
 FILTERED_RESULTS = "FILTERED_RESULTS"
+PAMPHLET_ID = "PAMPHLET_ID"
 
 
 app = Flask(__name__)
 MQAPI_BASE_URL = 'http://www.mapquestapi.com/'
 HPAPI_BASE_URL = 'https://www.hikingproject.com/data'
+app.config.update(
+    MAIL_SERVER='smtp.gmail.com',
+    MAIL_PORT=587,
+    MAIL_USE_TLS=True,
+    MAIL_USERNAME='TrekAssure@gmail.com',
+    MAIL_PASSWORD=t_pass
+)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = (
     os.environ.get('DATABASE_URL', 'postgres:///trekassure_db'))
@@ -38,7 +48,7 @@ connect_db(app)
 
 
 @app.before_request
-def add_user_to_g():
+def handle_g_data():
     """ Handling of stored data for a user's session """
 
     # store user in g
@@ -68,6 +78,9 @@ def do_logout():
 
     if SEARCH_ID in session:
         del session[SEARCH_ID]
+
+    if PAMPHLET_ID in session:
+        del session[PAMPHLET_ID]
 
 
 @app.route('/')
@@ -204,7 +217,7 @@ def secure_hike(trail_id):
 
 @app.route('/users/<int:user_id>/pamphlets/<int:pamphlet_id>')
 def show_secured_hike_pamphlet(user_id, pamphlet_id):
-    """ Route that shows saved user pamphlets. If session user does not match user_id, 
+    """ Route that shows saved user pamphlets. If session user does not match user_id,
     then redirect back to trail route. """
 
     if user_id != g.user.id:
@@ -212,10 +225,46 @@ def show_secured_hike_pamphlet(user_id, pamphlet_id):
         return redirect("/trails/search")
 
     pamphlet = SecuredHikePamphlet.query.get_or_404(pamphlet_id)
+
+    if pamphlet.user.id != g.user.id:
+        flash("Not authorized to view that page", "warning")
+        return redirect("/trails/search")
+
     secured_trip = pamphlet.data
     trail = get_trail(h_key, pamphlet.trail_id)
+    session[PAMPHLET_ID] = pamphlet_id
 
-    return render_template('/trail/secure_results.html', secured_trip=secured_trip, trail=trail)
+    return render_template('/trail/secure_results.html', secured_trip=secured_trip, trail=trail, pamphlet_id=pamphlet_id)
+
+
+@app.route('/users/<int:user_id>/pamphlets/<int:pamphlet_id>/send')
+def send_pamphlet_email(user_id, pamphlet_id):
+    """ Send email to user """
+
+    if user_id != g.user.id:
+        flash("Not authorized to view that page", "warning")
+        return redirect("/trails/search")
+
+    if pamphlet_id != session['PAMPHLET_ID']:
+        flash("Please view pamphlet before sending", "warning")
+        return redirect("/trails/search")
+
+    try:
+        to_email = request.args['email']
+        valid = validate_email(to_email, allow_smtputf8=False)
+
+        mail = Mail(app)
+        msg = Message("Your Pamphlet", sender="TrekAssure@gmail.com",
+                      recipients=[to_email])
+        msg.body = (request.args['pamphletText']
+                    + "\n"
+                    + f"This email was sent by {g.user.email} using TrekAssure")
+        mail.send(msg)
+        return "Sent Email!"
+
+    except:
+        return "Invalid Email Address"
+
 
 # *****************************
 # USER ACCOUNT ROUTES
