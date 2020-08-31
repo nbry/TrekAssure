@@ -6,8 +6,8 @@ $(async function () {
   const $radius = $("#radius")
 
   // m_key is mapquest API key
-  
-
+  const m_key_request = await axios.get("/key")
+  const m_key = m_key_request.data
 
   // *****************
   // GENERAL UI AND POPOVERS

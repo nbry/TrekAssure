@@ -260,7 +260,7 @@ def show_secured_hike_pamphlet(user_id, pamphlet_id):
 
 @app.route('/users/<int:user_id>/pamphlets/<int:pamphlet_id>/send')
 def send_pamphlet_email(user_id, pamphlet_id):
-    """ Send email to user """
+    """ Send email to user. Receives raw text data from javascript files to render email"""
     if not g.user:
         flash("Please log in first", "danger")
         return redirect('/login')
@@ -289,6 +289,16 @@ def send_pamphlet_email(user_id, pamphlet_id):
     except:
         return "Invalid Email Address"
 
+
+@app.route('/users/<int:user_id>/pamphlets')
+def redirect_to_account_info(user_id):
+    """ Pamphlets are shown on user account info. Redirect to appropriate page """
+
+    if not g.user:
+        flash("Please log in first", "danger")
+        return redirect('/login')
+
+    return redirect(f'/users/{user_id}')
 
 # *****************************
 # USER ACCOUNT ROUTES
@@ -382,3 +392,12 @@ def logout_user():
     flash("logged out", "warning")
 
     return redirect('/')
+
+
+# *****************************
+# M_KEY FOR FRONT END ROUTE
+# *****************************
+
+@app.route('/key')
+def provide_key():
+    return m_key

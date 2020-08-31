@@ -9,7 +9,8 @@
 
         <form method="POST">
             {{ form.hidden_tag() }}
-            {% for field in form if field.widget.input_type != 'hidden' %}
+            {% for field in form if field.widget.input_type != 'hidden'
+                and field.name != 'address' %}
             <div class="form-group">
                 {{ field.label }}
                 {{ field(class_='form-control') }}
