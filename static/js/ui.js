@@ -35,6 +35,19 @@ $(async function () {
     }, 2000)
   };
 
+  //Search Trail Form Animation
+  if ($("#trail-form")) {
+    setTimeout(function () {
+      $("#trail-form").fadeIn(700);
+    }, 200)
+  };
+
+  if ($(".register-form")) {
+    setTimeout(function () {
+      $(".register-form").fadeIn(700);
+    }, 200)
+  };
+
   // Secure form spinner
   if ($("#secure-form-btn")) {
     $("#secure-form").on("submit", function () {
@@ -162,7 +175,7 @@ $(async function () {
         <small>${result.difficulty[0]}</small>
     </div>
     <p class="mb-1">${result.summary}</p>
-    <small>Rating: ${result.stars} out of 5 (${result.starVotes}})</small>
+    <small>Rating: ${result.stars} out of 5 (${result.starVotes})</small>
 </a>
 
 <div class="modal fade" id="modal-${result.id}" tabindex="-1" aria-labelledby="ModalLabel-${result.id}"
@@ -193,7 +206,7 @@ $(async function () {
                             <li>
                                 <small>
                                     <a target="_blank"
-                                        href="https://www.hikingproject.com/trail/${result.id}/${result.name}}">
+                                        href="https://www.hikingproject.com/trail/${result.id}/${result.name}">
                                         (...more info about this trail)
                                     </a>
                                 </small>

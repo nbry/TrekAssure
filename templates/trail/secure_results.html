@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="container">
-    <div class="pamphlet mx-auto my-3">
+    <div class="pamphlet mx-auto my-3 hidden">
         <h1 class="display-4 text-center">After-The-Hike Pamphlet</h1>
         <div class="row">
             <div class="col ml-5">
@@ -128,17 +128,17 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">Receive a Pamphlet by Email</h5>
+                <h5 class="modal-title" id="exampleModalLongTitle">Receive Your Pamphlet By Email</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
                 <form data-user_id="{{g.user.id}}" data-pamphlet_id="{{session['PAMPHLET_ID']}}" id="email-pamphlet">
-                    <p>Where do you want your pamphlet to be sent?</p>
                     <div class="form-group">
-                        <label for="email-input">Email Address: </label>
-                        <input type="email" id="email-input" class="form-control" value="{{ g.user.email }}">
+                        <label for="email-input">Send Pamphlet To: </label>
+                        <input type="email" id="email-input" class="form-control" value="{{ g.user.email }}"
+                            placeholder="Email Addresss">
                     </div>
                     <div id="email-loading" class="text-center"></div>
                     <hr>

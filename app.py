@@ -321,6 +321,17 @@ def show_user_profile(user_id):
     return render_template('/user/profile.html', user=user_info)
 
 
+@app.route('/users')
+def redirect_to_user_profile():
+    """ Redirect to session user profile """
+
+    if not g.user:
+        flash("Please log in first", "danger")
+        return redirect('/login')
+
+    return redirect(f'/users/{g.user.id}')
+
+
 @app.route('/signup', methods=['GET', 'POST'])
 def signup_user():
     """ Show sign up page for a user, and handle post """
@@ -400,4 +411,8 @@ def logout_user():
 
 @app.route('/key')
 def provide_key():
+    if not g.user:
+        flash("Please log in first", "danger")
+        return redirect('/login')
+
     return m_key
