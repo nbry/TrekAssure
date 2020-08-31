@@ -1,13 +1,13 @@
-let saveData = (function () {
-    let a = document.createElement("a");
-    document.body.appendChild(a);
-    a.style = "display: none";
+let saveDataAs = (function () {
+    let saver = document.createElement("a");
+    document.body.appendChild(saver);
+    saver.style = "display: none";
     return function (data, fileName) {
-        blob = new Blob([data], { type: "octet/stream" }),
-            url = window.URL.createObjectURL(blob);
-        a.href = url;
-        a.download = fileName;
-        a.click();
+        let blob = new Blob([data], { type: "octet/stream" })
+        let url = window.URL.createObjectURL(blob);
+        saver.href = url;
+        saver.download = fileName;
+        saver.click();
         window.URL.revokeObjectURL(url);
     };
 }());
@@ -19,8 +19,6 @@ function processPamphletData() {
     const pharmacyDirections = $('#list-pharmacy-directions').children('ol').children().children('span');
     const hospitalDirections = $('#list-hospital-directions').children('ol').children().children('span');
     const policeDirections = $('#list-policestation-directions').children('ol').children().children('span');
-
-
 
     const directionSet = {
         'HOME': [
@@ -106,7 +104,7 @@ function processPamphletData() {
 $('#text-file-pamphlet').on("click", function () {
     let pamphlet = processPamphletData();
     let fileName = "your_pamphlet.txt";
-    saveData(pamphlet, fileName)
+    saveDataAs(pamphlet, fileName)
 })
 
 $('#email-pamphlet').on("submit", async function (evt) {

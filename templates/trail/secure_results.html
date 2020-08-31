@@ -8,10 +8,10 @@
         <h1 class="display-4 text-center">After-The-Hike Pamphlet</h1>
         <div class="row">
             <div class="col ml-5">
-                <a id="text-file-pamphlet" class="btn btn-block text-white btn-success">Download Pamphlet File</a>
+                <a id="text-file-pamphlet" class="btn btn-block border btn-light">Download Pamphlet File</a>
             </div>
             <div class="col mr-5">
-                <a data-toggle="modal" data-target="#emailModal" class="btn btn-block text-white btn-success">
+                <a data-toggle="modal" data-target="#emailModal" class="btn btn-block border btn-light">
                     Receive Pamphlet Email
                 </a>
             </div>
@@ -48,7 +48,7 @@
                         <hr>
                         <p>Directions to
                             <span class="home-name">
-                                <b>{{secured_trip['home']['info']}}</b>
+                                <b>{{secured_trip['home']['info'].upper()}}</b>
                                 ({{secured_trip['home']['route']['route_info']['distance']}} miles away)
                             </span>
                         </p>
@@ -76,7 +76,7 @@
                             <p class="lead text-capitalize">Nearest {{destination}}: </p>
                             <p>
                                 <b>
-                                    {{secured_trip[destination]['info']['name']}}
+                                    {{secured_trip[destination]['info']['name'].upper()}}
                                 </b>
                             </p>
                             <p class="font-italic mb-0 {{destination.replace(' ', '')}}-address1">
@@ -92,7 +92,7 @@
                         <hr>
                         <p>Directions to
                             <span class="{{destination.replace(' ', '')}}-name">
-                                <b>{{secured_trip[destination]['info']['name']}}</b>
+                                <b>{{secured_trip[destination]['info']['name'].upper()}}</b>
                                 ({{secured_trip[destination]['route']['route_info']['distance']}} miles away)
                             </span>
                         </p>
@@ -142,7 +142,7 @@
                     </div>
                     <div id="email-loading" class="text-center"></div>
                     <hr>
-                    <button type="submit" class="btn btn-block btn-info">Send</button>
+                    <button type="submit" class="btn btn-block btn-success">Send</button>
                 </form>
             </div>
         </div>

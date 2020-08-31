@@ -32,7 +32,7 @@ $(async function () {
   if ($("span.alert")) {
     setTimeout(function () {
       $("span.alert").fadeOut(800);
-    }, 2500)
+    }, 2000)
   };
 
   // Secure form spinner

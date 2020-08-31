@@ -97,6 +97,9 @@ def home_page():
 def get_trails():
     """ Handle a request (from front end) and respond with
     a JSON object with trail info """
+    if not g.user:
+        flash("Please log in first", "danger")
+        return redirect('/login')
 
     place_search = request.args['place']
     radius = int(request.args['radius'])
@@ -113,6 +116,10 @@ def get_trails():
 @app.route('/trails/store-results', methods=['POST'])
 def store_trails():
     """ Store JSON results to database """
+    if not g.user:
+        flash("Please log in first", "danger")
+        return redirect('/login')
+
     response = request.get_json()
 
     results = response['data']['results']
@@ -151,6 +158,9 @@ def refresh_trails():
 @app.route('/trails/search')
 def show_search_results():
     """ Render a form that shows "Find Your Trail" form """
+    if not g.user:
+        flash("Please log in first", "danger")
+        return redirect('/login')
 
     form_t = TrailSearchForm()
     form_s = SecureHikeForm()
@@ -166,6 +176,9 @@ def show_trail(trail_id):
     """ Render a page that shows detail about a trail, should the user manually search by id.
     Also serves as the default route if user tampers with user/{id}/pamphlets URL.
     This route is not an explicit feature of TrekAssure. It's more of a quality of life consideration """
+    if not g.user:
+        flash("Please log in first", "danger")
+        return redirect('/login')
 
     try:
         trail = get_trail(h_key, trail_id)
@@ -187,6 +200,10 @@ def secure_hike(trail_id):
     """ Process the POST route for securing a trial. Trail ID should be
     captured on a click event written in javascript. If User made a search
     recently, they can refresh the page """
+    if not g.user:
+        flash("Please log in first", "danger")
+        return redirect('/login')
+
     form_s = SecureHikeForm()
 
     if form_s.validate_on_submit():
@@ -220,6 +237,10 @@ def show_secured_hike_pamphlet(user_id, pamphlet_id):
     """ Route that shows saved user pamphlets. If session user does not match user_id,
     then redirect back to trail route. """
 
+    if not g.user:
+        flash("Please log in first", "danger")
+        return redirect('/login')
+
     if user_id != g.user.id:
         flash("Not authorized to view that page", "warning")
         return redirect("/trails/search")
@@ -240,6 +261,9 @@ def show_secured_hike_pamphlet(user_id, pamphlet_id):
 @app.route('/users/<int:user_id>/pamphlets/<int:pamphlet_id>/send')
 def send_pamphlet_email(user_id, pamphlet_id):
     """ Send email to user """
+    if not g.user:
+        flash("Please log in first", "danger")
+        return redirect('/login')
 
     if user_id != g.user.id:
         flash("Not authorized to view that page", "warning")
@@ -274,6 +298,9 @@ def send_pamphlet_email(user_id, pamphlet_id):
 @app.route('/users/<int:user_id>')
 def show_user_profile(user_id):
     """ Show user profile. If session user does not match user_id, redirect to trail route """
+    if not g.user:
+        flash("Please log in first", "danger")
+        return redirect('/login')
 
     if user_id != g.user.id:
         flash("Not authorized to view that page", "warning")
