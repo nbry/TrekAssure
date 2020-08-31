@@ -317,8 +317,58 @@ def show_user_profile(user_id):
         return redirect("/trails/search")
 
     user_info = User.query.get(g.user.id)
+    form = UserSignupForm()
+    form_categories = form.data
+    del form_categories['csrf_token']
 
-    return render_template('/user/profile.html', user=user_info)
+    form_cats = [k for k in form_categories]
+
+    return render_template('/user/profile.html', user=user_info, form=form, form_cats=form_cats)
+
+
+@app.route('/users/<int:user_id>/update', methods=["POST"])
+def update_user_settings(user_id):
+    """ Handle user request to change account settings """
+    if not g.user:
+        flash("Please log in first", "danger")
+        return redirect('/login')
+
+    if user_id != g.user.id:
+        flash("Not authorized to view that page", "warning")
+        return redirect("/trails/search")
+
+    form = UserSignupForm()
+
+    if form.validate_on_submit():
+        try:
+            user = User.query.get(user_id)
+            data = form.data
+
+            user.username = data['username']
+            user.email = data['email']
+            user.address = data['address']
+
+            if data['new_password'] != "":
+                if len(data['new_password']) < 6:
+                    flash("password must at least 6 characters", "warning")
+                    return redirect(f'/users/{user_id}')
+                else:
+                    user.password = User.hash_pass(data['new_password'])
+
+            db.session.commit()
+
+            flash(f"Updated!", "success")
+            return redirect(f'/users/{user_id}')
+
+        except:
+            if IntegrityError:
+                flash(f"Username {data['username']} already exists", "danger")
+                return redirect(f'/users/{user_id}')
+
+    else:
+        for error in form.errors:
+            flash(form.errors[error][0], "danger")
+        return redirect(f'/users/{user_id}')
 
 
 @app.route('/users')

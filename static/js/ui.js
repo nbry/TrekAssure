@@ -1,4 +1,3 @@
-
 $(async function () {
 
   const $searchTrailForm = $('#search-trail-form')
@@ -35,17 +34,15 @@ $(async function () {
     }, 2000)
   };
 
-  //Search Trail Form Animation
-  if ($("#trail-form")) {
+  //Item Loading Animations (class must be hidden)
+  if ($(".animate-loading")) {
     setTimeout(function () {
-      $("#trail-form").fadeIn(700);
-    }, 200)
-  };
+      $(".animate-loading").fadeIn(650);
+    }, 150);
 
-  if ($(".register-form")) {
     setTimeout(function () {
-      $(".register-form").fadeIn(700);
-    }, 200)
+      $(".animate-loading").removeClass("hidden");
+    }, 1000)
   };
 
   // Secure form spinner
@@ -57,7 +54,7 @@ $(async function () {
   };
 
   applyOpenCloseSecureForm();
-  applyMapquestSearchSDK()
+  applyMapquestSearchSDK(m_key);
 
 
   // *****************
@@ -132,24 +129,15 @@ $(async function () {
     }
   };
 
-  function applyMapquestSearchSDK() {
-    if (!m_key) {
-      return
+  function applyMapquestSearchSDK(m_key) {
+    if ($('.m-search')) {
+      for (let search of $('.m-search')) {
+        placeSearch({
+          key: m_key,
+          container: search
+        });
+      }
     };
-
-    if ($('#place-search-input')[0]) {
-      placeSearch({
-        key: m_key,
-        container: document.querySelector('#place-search-input')
-      });
-    };
-
-    if ($('#home_address')[0]) {
-      placeSearch({
-        key: m_key,
-        container: document.querySelector('#home_address')
-      });
-    }
   };
 
 

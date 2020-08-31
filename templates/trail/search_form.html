@@ -1,14 +1,10 @@
 {% extends "base.html" %}
 
-{% block head %}
-<link type="text/css" rel="stylesheet" href="https://api.mqcdn.com/sdk/place-search-js/v1.0.0/place-search.css" />
-{% endblock %}
-
 {% block title %}Search Trail{% endblock %}
 
 {% block content %}
 <div class="search-bg">
-    <div id="trail-form" class="container py-4 px-5 hidden">
+    <div id="trail-form" class="container py-4 px-5 hidden animate-loading">
         <h1 class="text-center display-2">Find Your Trail</h1>
 
         <form id="search-trail-form" class="form-group">

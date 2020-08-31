@@ -10,20 +10,28 @@
     height: 50px;
 }
 
-/* REGISTRATION*/
+/* REGISTRATION AND ACCOUNT SETTINGS*/
 
 /* ***************************** */
 
-.register-form {
+.register-form, .account-settings {
+    position: relative;
     background: white;
     width: 100%;
-    max-width: 500px;
     border: 1px solid rgb(172, 172, 172);
     border-radius: 10px;
     margin-top: 30px;
     padding: 20px;
+    z-index: 1;
+}
+
+.register-form {
+    max-width: 500px;
     text-align: center;
-    z-index: 3;
+}
+
+.account-settings {
+    max-width: 700px;
 }
 
 .body-shadow {
@@ -33,7 +41,17 @@
     bottom: 0;
     top: 0;
     background-color: rgba(19, 19, 19, 0.699);
-    z-index: 2;
+    z-index: 0;
+}
+
+.close-item {
+    font-size: 1.2em;
+}
+
+.close-item:hover {
+    cursor: pointer;
+    color: rgb(173, 173, 173);
+    transition: 100 ms;
 }
 
 /* SEARCH TRAIL PAGE */

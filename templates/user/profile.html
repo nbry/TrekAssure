@@ -3,40 +3,114 @@
 {% block title %}{{user.username}}'s Account{% endblock %}
 
 {% block content %}
-<div class="container d-flex justify-content-center">
-    <div class="register-form">
-        <h1 class="display-3">Account Info</h1>
+<div class="container">
+    <div class="account-settings mx-auto hidden animate-loading">
+        <h2 class="display-4 text-center">Account Settings</h2>
 
-        <!-- <table class="table">
-            <thead>
-                <tr>
-                    <th scope="col">First</th>
-                    <th scope="col">Last</th>
-                    <th scope="col">Handle</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <th scope="row">1</th>
-                    <td>Mark</td>
-                    <td>Otto</td>
-                    <td>@mdo</td>
-                </tr>
-                <tr>
-                    <th scope="row">2</th>
-                    <td>Jacob</td>
-                    <td>Thornton</td>
-                    <td>@fat</td>
-                </tr>
-                <tr>
-                    <th scope="row">3</th>
-                    <td>Larry</td>
-                    <td>the Bird</td>
-                    <td>@twitter</td>
-                </tr>
-            </tbody>
-        </table> -->
+        {% for field in form_cats %}
+        {% if field != "password" %}
+        {% if field != "new_password" %}
+        <h4 class="mt-4 text-capitalize">{{field}}</h4>
+        {% else %}
+        <h4 class="mt-4 text-capitalize">Password</h4>
+        {% endif %}
+        <hr>
+        <div class="row">
+            <div class="col-10">
+                {% if field != "new_password" %}
+                <p id="{{field}}-header" class="field-name-header">{{user[field]}}</p>
+                {% else %}
+                <p id="new-password-header" class="field-name-header">******</p>
+                {% endif %}
+
+                <div id="{{field}}-update" class="hidden form-update">
+
+                </div>
+            </div>
+            <div class="col-2 d-flex justify-content-end">
+                <a data-toggle-show="{{field}}" id="form-changer-{{field}}"
+                    class="form-changer btn btn-outline-secondary">Change</a>
+                <a data-toggle-show="{{field}}" id="form-back-{{field}}" class="form-back hidden">
+                    <i class="fas fa-times dark-icon close-item"></i>
+                </a>
+            </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+
+        <hr class=" my-5">
+        <h2 class="display-4 text-center">My Profile</h2>
+        <h4 class="mt-4 text-capitalize">Pamphlets</h4>
+        <hr>
+        <div class="row">
+            <div class="col">
+                <a href="">View Your Pamphlets</a>
+            </div>
+        </div>
+
+        <h4 class="mt-4 text-capitalize">Search History</h4>
+        <hr>
+        <div class="row">
+            <div class="col">
+                <a href="">View Your Search History</a>
+            </div>
+        </div>
+
+        <h4 class="mt-4 text-capitalize">Remove Account</h4>
+        <hr>
+        <div class="row">
+            <div class="col">
+                <a href="">Remove Your Account and Delete All Profile Info</a>
+            </div>
+        </div>
+
     </div>
 </div>
 
+<form id="settings-form" class="hidden" action="/users/{{user.id}}/update" method="POST">
+    <div class="form-group">
+        {{ form.hidden_tag() }}
+        {% for field in form if field.widget.input_type != 'hidden'%}
+        {% if field.name != "password" %}
+        <div id="{{field.name}}-target" class="field-target hidden">
+            {% if field.name != "address" and field.name != "new_password"%}
+            {{ field.label(text=("Update Your " + field.name.capitalize()) ) }}
+            {{ field(class_='form-control mb-2', value=user[field.name], placeholder=("new " + field.name) )}}
+
+            {% elif field.name == "new_password" %}
+            {{ field.label(text=("Change Your Password") ) }}
+            {{ field(class_='form-control mb-2', value="******", placeholder=("new password" ) )}}
+
+            {% else %}
+            {{ field.label(text=("Update Your " + field.name.capitalize()) ) }}
+            {{ field(class_='m-search form-control', value=user[field.name], placeholder=("new " + field.name) )}}
+            {% endif %}
+
+
+        </div>
+        {% endif %}
+
+        {% endfor %}
+        {% for field in form if field.widget.input_type != 'hidden'%}
+
+        {% if field.name =="password" %}
+        <div id="{{field.name}}-target" class="field-target hidden">
+            {{ field.label(text=("Enter Your Current Password To Submit Changes") ) }}
+            {{ field(class_='form-control mb-2', value=user[field.name], placeholder=("your " + field.name) )}}
+        </div>
+        {% endif %}
+        {%endfor %}
+
+
+        <button type="submit" class="btn btn-success btn-lg btn-block">Update</button>
+    </div>
+</form>
+
+
+<div class="body-shadow"></div>
+{% endblock %}
+
+
+{% block scripts %}
+<script src="/static/js/acc-settings.js"></script>
 {% endblock %}

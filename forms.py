@@ -28,6 +28,8 @@ class UserSignupForm(FlaskForm):
                         Email("Please enter a valid email address")])
     address = StringField("Home Address (optional)")
 
+    new_password = PasswordField("New Password")
+
 
 class LoginForm(FlaskForm):
     username = StringField("Username", validators=[InputRequired()])
