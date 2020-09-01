@@ -5,16 +5,16 @@
 {% block content %}
 <div class="container">
     <div class="account-settings mx-auto">
-        <h2 class="display-4 text-center">Account Settings</h2>
+        <h2 class="display-4 text-center h4">Account Settings</h2>
 
         {% for field in form_cats %}
         {% if field != "password" %}
         {% if field != "new_password" %}
-        <h4 class="mt-4 text-capitalize">{{field}}</h4>
+        <h5 class="mt-4 mb-0 text-capitalize">{{field}}</h5>
         {% else %}
-        <h4 class="mt-4 text-capitalize">Password</h4>
+        <h5 class="mt-4 mb-0 text-capitalize">Password</h5>
         {% endif %}
-        <hr>
+        <hr class="mt-0">
         <div class="row">
             <div class="col-10">
                 {% if field != "new_password" %}
@@ -38,29 +38,29 @@
         {% endif %}
         {% endfor %}
 
-        <hr class=" my-5">
-        <h2 class="display-4 text-center">My Profile</h2>
-        <h4 class="mt-4 text-capitalize">Pamphlets</h4>
-        <hr>
+        <h2 class="display-4 text-center mt-3">My Profile</h2>
+        <h5 class="mt-4 text-capitalize mb-0">Pamphlets</h5>
+        <hr class="mt-0">
         <div class="row">
             <div class="col">
                 <a href="/users/{{user.id}}/pamphlets">View Your Pamphlets</a>
             </div>
         </div>
 
-        <h4 class="mt-4 text-capitalize">Search History</h4>
-        <hr>
+        <h5 class="mt-4 text-capitalize mb-0">Search History</h5>
+        <hr class="mt-0">
         <div class="row">
             <div class="col">
                 <a href="/users/{{user.id}}/history">View Your Search History</a>
             </div>
         </div>
 
-        <h4 class="mt-4 text-capitalize">Remove Account</h4>
-        <hr>
+        <h5 class="mt-4 text-capitalize mb-0">Remove Account</h5>
+        <hr class="mt-0">
         <div class="row">
             <div class="col">
-                <button type="button" class="btn btn-outline-danger mb-5" data-toggle="modal" data-target="#deleteAccount">
+                <button type="button" class="btn btn-outline-danger mb-5" data-toggle="modal"
+                    data-target="#deleteAccount">
                     Remove Your Account and Delete All Info
                 </button>
             </div>
