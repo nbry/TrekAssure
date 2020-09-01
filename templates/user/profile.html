@@ -97,8 +97,8 @@
 
         {% if field.name =="password" %}
         <div id="{{field.name}}-target" class="field-target hidden">
-            {{ field.label(text=("Enter Your Current Password To Submit Changes") ) }}
-            {{ field(class_='form-control mb-2', value=user[field.name], placeholder=("your " + field.name) )}}
+            {{ field.label(text=("Password") ) }}
+            {{ field(class_='form-control mb-2', value=user[field.name], placeholder=("Enter your current password to submit changes") )}}
         </div>
         {% endif %}
         {%endfor %}

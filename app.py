@@ -185,6 +185,9 @@ def show_trail(trail_id):
     try:
         trail = get_trail(h_key, trail_id)
         trail['difficulty'] = rate_difficulty(trail['difficulty'])
+        if trail['imgMedium'] == "":
+            trail['imgMedium'] = "/static/images/no-image.png"
+
         form_s = SecureHikeForm()
 
         return render_template('/trail/trail_info.html', result=trail, form_s=form_s)

@@ -69,6 +69,15 @@
     padding-top: 50px;
 }
 
+.secure-form-scroller .fas:hover {
+    transition: 80ms;
+    color: rgb(194, 194, 194);
+}
+
+#results-container {
+    min-height: 100vh;
+}
+
 #trail-form {
     background: rgba(0, 0, 0, 0.767);
     max-width: 750px;

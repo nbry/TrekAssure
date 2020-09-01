@@ -148,8 +148,12 @@ def search_for_trails(key, lat, lon, radius=None):
     trails_info = data['trails']
 
     for trail in trails_info:
-        if trail['summary'] == "Needs Summary":
-            trail['summary'] = ""
+        trail['short_sum'] = trail['summary'][:50] + "..."
+        trail['short_name'] = trail['name'][:20] + "..."
+
+    for trail in trails_info:
+        if trail['summary'] == "Needs Summary" or trail['summary'] == "":
+            trail['short_sum'] = "No Description"
 
     return trails_info
 
@@ -162,6 +166,13 @@ def get_trail(key, id):
 
     data = response.json()
     trail_info = data['trails'][0]
+
+    # duplicate code from above. May need refactoring
+    trail_info['short_sum'] = trail_info['summary'][:50] + "..."
+    trail_info['short_name'] = trail_info['name'][:20] + "..."
+
+    if trail_info['summary'] == "Needs Summary" or trail_info['summary'] == "":
+        trail_info['short_sum'] = "No Description"
 
     return trail_info
 
@@ -186,7 +197,7 @@ def rate_difficulty(color):
               'blueBlack', 'black', 'dblack', 'missing']
 
     ratings = [('Easy', 'No obstacles. Flat.'), ('Easy/Intermediate', 'Mostly flat and even.'), ('Intermediate', 'Uneven Terrain. Small hills'),
-               ('Intermediate/Difficult', 'Steep sections, rocks, roots'), ('Difficult', 'Tricky terrain. Steep. Not for beginners'), ('Very Difficult', 'Hazardous. Very steep. Experts only'), (None, None)]
+               ('Int/Difficult', 'Steep sections, rocks, roots'), ('Difficult', 'Tricky terrain. Steep. Not for beginners'), ('Very Difficult', 'Hazardous. Very steep. Experts only'), (None, None)]
 
     index = colors.index(color)
 

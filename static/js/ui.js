@@ -53,9 +53,17 @@ $(async function () {
     })
   };
 
+  // Secure form scroller
+  if ($(".secure-form-scroller")) {
+    $(".secure-form-scroller").on("click", function () {
+      $([document.documentElement, document.body]).animate({
+        scrollTop: $("body").offset().top
+      }, 300);
+    })
+  }
+
   applyOpenCloseSecureForm();
   applyMapquestSearchSDK(m_key);
-
 
   // *****************
   // TRAIL SEARCH FORM UI
@@ -72,19 +80,23 @@ $(async function () {
     // TREKASSURE API call to get results and append:
     const results = await SearchTrailList.getTrails($searchPlace.val(), $radius.val());
 
-    $('#search-results').children().remove();
+    const table = $('#trails-table').DataTable();
+    table.rows().remove().draw();
+
+    for (let result of results.data) {
+      const element = generateResultHTML(result);
+      table.row.add(element.trailRow).draw();
+      $('#trail-modals').append(element.trailModal);
+    };
 
     if (results.data.length === 0) {
-      $('#search-results').append($zeroResults);
-    }
-    else {
-      for (let result of results.data) {
-        const resultDiv = generateResultHTML(result);
-        $('#search-results').append(resultDiv);
-      };
-
+      $('#results-number').append($zeroResults);
+      $('.table-container').hide();
+    } else {
       $('#results-number').text(`(Found ${results.data.length} Trails)`);
-    }
+      $('.table-container').show();
+    };
+
 
     applyOpenCloseSecureForm();
     applyMapquestSearchSDK();
@@ -93,13 +105,11 @@ $(async function () {
     $('#results-container').fadeIn(800);
     $([document.documentElement, document.body]).animate({
       scrollTop: $(".spacer").offset().top
-    }, 800);
+    }, 500);
 
     // TREKASSURE API call to store search result to database
     const search = await SearchTrailList.storeTrailSearch(results.data, $searchPlace.val(), $radius.val());
-
   });
-
 
 
   // *****************
@@ -141,81 +151,88 @@ $(async function () {
   };
 
 
-
-
   // *****************
   // GENERATE TRAIL RESULT HTML
   // *****************
 
   function generateResultHTML(result) {
-    let resultsMarkup;
+    let trailRow = {};
+    let trailModal
 
     if (result.imgMedium === "") {
       result.imgMedium = "/static/images/no-image.png"
     };
 
-    resultsMarkup = $(`
+    trailRow =
+    {
+      0: `<a href="#" data-toggle="modal" data-target="#modal-${result.id}">
+                    ${result.name}</a>`,
+      1: `${result.short_sum}`,
+      2: `${result.stars} out of 5(${result.starVotes})`,
+      3: `${result.difficulty[0]}`
+    };
 
-<a href="#" class="list-group-item list-group-item-action mb-1" data-toggle="modal"
-    data-target="#modal-${result.id}">
-    <div class="d-flex w-100 justify-content-between">
-        <h5 class="mb-1">${result.name}</h5>
-        <small>${result.difficulty[0]}</small>
-    </div>
-    <p class="mb-1">${result.summary}</p>
-    <small>Rating: ${result.stars} out of 5 (${result.starVotes})</small>
-</a>
+    if (result.name.length > 20) {
+      trailRow[0] = `<a href="#" data-toggle="modal" data-target="#modal-${result.id}">
+      ${result.short_name}</a>`
+    };
 
-<div class="modal fade" id="modal-${result.id}" tabindex="-1" aria-labelledby="ModalLabel-${result.id}"
-    aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header text-center py-1">
-                <h5 class="modal-title" id="ModalLabel-${result.id}">${result.name}</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+    trailModal = $(`
+
+        <div id = "trail-modals" class= "hidden" >
+          <div class="modal fade" id="modal-${result.id}" tabindex="-1" aria-labelledby="ModalLabel-${result.id}"
+            aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+              <div class="modal-content">
+                <div class="modal-header text-center py-1">
+                  <h5 class="modal-title" id="ModalLabel-${result.id}">${result.name}</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div id="info-modal-target-${result.id}" data-target-id="${result.id}" class=" modal-body">
-                <div class="trail-modal-info row">
+                  </button>
+                </div>
+                <div id="info-modal-target-${result.id}" data-target-id="${result.id}"
+                  class=" modal-body container">
+                  <div class="trail-modal-info row">
                     <div class="col-7">
-                        <img src="${result.imgMedium}" class="rounded img-fluid" alt="...">
-                    </div>
+                      <img src="${result.imgMedium}" class="rounded img-fluid" alt="...">
+                            </div>
 
-                    <div class="col-5">
+                      <div class="col-5">
                         <blockquote class="blockquote font-italic">
-                            <p class="mb-0">${result.summary}</p>
+                          <p class="mb-0">${result.summary}</p>
                         </blockquote>
                         <hr>
-                        <ul class="ml-0 p-1">
+                          <ul class="ml-0 p-1">
                             <li>${result.location}</li>
                             <li>${result.length} miles</li>
                             <li>Difficulty: ${result.difficulty[0]}</li>
                             <li>
-                                <small>
-                                    <a target="_blank"
-                                        href="https://www.hikingproject.com/trail/${result.id}/${result.name}">
-                                        (...more info about this trail)
-                                    </a>
-                                </small>
+                              <small>
+                                <a target="_blank"
+                                  href="https://www.hikingproject.com/trail/${result.id}/${result.name}">
+                                  (...more info about this trail)
+                                            </a>
+                              </small>
                             </li>
-                        </ul>
+                          </ul>
+                            </div>
+                      </div>
                     </div>
+                    <div class="modal-footer justify-content-center trail-modal-info">
+                      <p class="lead mr-3">Is this your hike?</p>
+                      <a id="${result.id}" type="button" class="open-secure btn btn-lg btn-success mr-3">Yes</a>
+                      <button type="button" class="btn btn-lg btn-danger" data-dismiss="modal">No</button>
+                    </div>
+                  </div>
                 </div>
+              </div>
             </div>
-            <div class="modal-footer justify-content-center trail-modal-info">
-                <p class="lead mr-3">Is this your hike?</p>
-                <a id="${result.id}" type="button" class="open-secure btn btn-lg btn-success mr-3">Yes</a>
-                <button type="button" class="btn btn-lg btn-danger" data-dismiss="modal">No</button>
-            </div>
-        </div>
-    </div>
-</div>`);
+    `)
 
-    return resultsMarkup
+    return { trailModal, trailRow }
   };
 
-  const $zeroResults = $(`<p class="lead text-center">No trails found within those search parameters. 
+  const $zeroResults = $(`<p class="lead text-center">No trails found within those search parameters.
     Try increasing the search radius or choosing a new place altogether. Zip Codes, Park Names, and Cities work well!</p >`);
 
 });

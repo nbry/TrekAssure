@@ -1,5 +1,9 @@
 {% extends "base.html" %}
 
+{% block head %}
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/dataTables.bootstrap4.min.css">
+{% endblock %}
+
 {% block title %}Search Trail{% endblock %}
 
 {% block content %}
@@ -9,8 +13,6 @@
 
         <form id="search-trail-form" class="form-group">
             <div class="row">
-                {{ form_t.hidden_tag() }}
-
                 {% for field in form_t
                if field.widget.input_type != 'hidden' %}
                 {% if field.id == 'place_search' %}
@@ -53,85 +55,152 @@
 <div class="spacer"></div>
 
 
+
 {% if results %}
 <div id="results-container" class="container">
-    <h1 class="display-3 text-center">Search Results</h1>
-    <small id="results-number" class="ml-1">(Found {{ results|length }} Trails)</small>
 
-    <div id="search-results" class="list-group">
+    <h1 class="display-3 text-center">Trails</h1>
+    <p id="results-number" class="text-center">(Found {{ results|length }} Trails)</p>
 
-        {% for result in results %}
-        <a href="#" class="list-group-item list-group-item-action mb-1" data-toggle="modal"
-            data-target="#modal-{{result.id}}">
-            <div class="d-flex w-100 justify-content-between">
-                <h5 class="mb-1">{{result.name}}</h5>
-                <small>{{result.difficulty[0]}}</small>
-            </div>
-            <p class="mb-1">{{result.summary}}</p>
-            <small>Rating: {{result.stars}} out of 5 ({{result.starVotes}})</small>
-        </a>
+    <div class="table-container hidden animate-loading mb-5">
+        <table id="trails-table" class="table table-striped" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Trail Name</th>
+                    <th>Description</th>
+                    <th>Rating</th>
+                    <th>Difficulty</th>
+                </tr>
+            </thead>
+            <tbody>
 
-        <div class="modal fade" id="modal-{{result.id}}" tabindex="-1" aria-labelledby="ModalLabel-{{result.id}}"
-            aria-hidden="true">
-            <div class="modal-dialog modal-lg modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header text-center py-1">
-                        <h5 class="modal-title" id="ModalLabel-{{result.id}}">{{result.name}}</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div id="info-modal-target-{{result.id}}" data-target-id="{{result.id}}"
-                        class=" modal-body container">
-                        <div class="trail-modal-info row">
-                            <div class="col-7">
-                                <img src="{{result.imgMedium}}" class="rounded img-fluid" alt="...">
-                            </div>
+                {% for result in results %}
+                <tr>
+                    <td>
+                        <a href="#" data-toggle="modal" data-target="#modal-{{result.id}}">
+                            {% if result.name | length < 20 %}
+                            {{ result.name }}
+                            {% else %}
+                            {{result.short_name}}
+                            {% endif %}
+                        </a>
+                    </td>
+                    <td>
+                        {{result.short_sum}}
+                    </td>
+                    <td>
+                        {{result.stars}} out of 5 ({{result.starVotes}})
+                    </td>
+                    <td>
+                        {{result.difficulty[0]}}
+                    </td>
+                </tr>
 
-                            <div class="col-5">
-                                <blockquote class="blockquote font-italic">
-                                    <p class="mb-0">{{result.summary}}</p>
-                                </blockquote>
-                                <hr>
-                                <ul class="ml-0 p-1">
-                                    <li>{{result.location}}</li>
-                                    <li>{{result.length}} miles</li>
-                                    <li>Difficulty: {{result.difficulty[0]}}</li>
-                                    <li>
-                                        <small>
-                                            <a target="_blank"
-                                                href="https://www.hikingproject.com/trail/{{result.id}}/{{result.name}}">
-                                                (...more info about this trail)
-                                            </a>
-                                        </small>
-                                    </li>
-                                </ul>
-                            </div>
+                {% endfor %}
+
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th>Trail Name</th>
+                    <th>Description</th>
+                    <th>Rating</th>
+                    <th>Difficulty</th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
+
+<!-- MODAL INFO -->
+
+{% for result in results %}
+<div id="trail-modals">
+    <div class="modal fade" id="modal-{{result.id}}" tabindex="-1" aria-labelledby="ModalLabel-{{result.id}}"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header text-center py-1">
+                    <h5 class="modal-title" id="ModalLabel-{{result.id}}">{{result.name}}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div id="info-modal-target-{{result.id}}" data-target-id="{{result.id}}" class=" modal-body container">
+                    <div class="trail-modal-info row">
+                        <div class="col-7">
+                            <img src="{{result.imgMedium}}" class="rounded img-fluid" alt="...">
+                        </div>
+
+                        <div class="col-5">
+                            <blockquote class="blockquote font-italic">
+                                <p class="mb-0">{{result.summary}}</p>
+                            </blockquote>
+                            <hr>
+                            <ul class="ml-0 p-1">
+                                <li>{{result.location}}</li>
+                                <li>{{result.length}} miles</li>
+                                <li>Difficulty: {{result.difficulty[0]}}</li>
+                                <li>
+                                    <small>
+                                        <a target="_blank"
+                                            href="https://www.hikingproject.com/trail/{{result.id}}/{{result.name}}">
+                                            (...more info about this trail)
+                                        </a>
+                                    </small>
+                                </li>
+                            </ul>
                         </div>
                     </div>
-                    <div class="modal-footer justify-content-center trail-modal-info">
-                        <p class="lead mr-3">Is this your hike?</p>
-                        <a id="{{result.id}}" type="button" class="open-secure btn btn-lg btn-success mr-3">Yes</a>
-                        <button type="button" class="btn btn-lg btn-danger" data-dismiss="modal">No</button>
-                    </div>
+                </div>
+                <div class="modal-footer justify-content-center trail-modal-info">
+                    <p class="lead mr-3">Is this your hike?</p>
+                    <a id="{{result.id}}" type="button" class="open-secure btn btn-lg btn-success mr-3">Yes</a>
+                    <button type="button" class="btn btn-lg btn-danger" data-dismiss="modal">No</button>
                 </div>
             </div>
         </div>
-        {% endfor %}
     </div>
 </div>
+
+{% endfor %}
 
 {% else %}
+<!-- hidden empty table -->
 <div id="results-container" class="container hidden">
+
     <h1 class="display-3 text-center">Search Results</h1>
-    <small id="results-number" class="ml-1"></small>
+    <p id="results-number" class="text-center"></p>
 
-    <div id="search-results" class="list-group">
-
+    <div class="table-container mb-5">
+        <table id="trails-table" class="table table-striped" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Trail Name</th>
+                    <th>Description</th>
+                    <th>Rating</th>
+                    <th>Difficulty</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th>Trail Name</th>
+                    <th>Description</th>
+                    <th>Rating</th>
+                    <th>Difficulty</th>
+                </tr>
+            </tfoot>
+        </table>
     </div>
 </div>
+
+<div id="trail-modals"></div>
+
 {% endif %}
 
+<!-- SECURE FORM -->
 <section id="outside-target" class="hidden">
     <div id="secure-form" class="secure-form hidden row ">
         <div class="col">
@@ -193,4 +262,10 @@
     </div>
 </section>
 
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
+<script src="/static/js/trails-table.js"></script>
 {% endblock %}
