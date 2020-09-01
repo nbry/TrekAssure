@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="container">
-    <div class="account-settings mx-auto hidden animate-loading">
+    <div class="account-settings mx-auto">
         <h2 class="display-4 text-center">Account Settings</h2>
 
         {% for field in form_cats %}
@@ -44,7 +44,7 @@
         <hr>
         <div class="row">
             <div class="col">
-                <a href="">View Your Pamphlets</a>
+                <a href="/users/{{user.id}}/pamphlets">View Your Pamphlets</a>
             </div>
         </div>
 
@@ -52,7 +52,7 @@
         <hr>
         <div class="row">
             <div class="col">
-                <a href="">View Your Search History</a>
+                <a href="/users/{{user.id}}/history">View Your Search History</a>
             </div>
         </div>
 
@@ -60,7 +60,9 @@
         <hr>
         <div class="row">
             <div class="col">
-                <a href="">Remove Your Account and Delete All Profile Info</a>
+                <button type="button" class="btn btn-outline-danger mb-5" data-toggle="modal" data-target="#deleteAccount">
+                    Remove Your Account and Delete All Info
+                </button>
             </div>
         </div>
 
@@ -83,7 +85,7 @@
 
             {% else %}
             {{ field.label(text=("Update Your " + field.name.capitalize()) ) }}
-            {{ field(class_='m-search form-control', value=user[field.name], placeholder=("new " + field.name) )}}
+            {{ field(class_='m-search form-control mb-2', value=user[field.name], placeholder=("new " + field.name) )}}
             {% endif %}
 
 
@@ -105,6 +107,34 @@
         <button type="submit" class="btn btn-success btn-lg btn-block">Update</button>
     </div>
 </form>
+
+<div class="modal fade" id="deleteAccount" tabindex="-1" role="dialog" aria-labelledby="deleteAccountTitle"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Delete Your TrekAssure Account</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="lead p4">We're sad to see you go! Are you sure you want to delete your TrekAssure
+                    account, along with all your pamphlets and search history?
+                </p>
+            </div>
+            <div class="modal-footer">
+                <form action="/users/{{ user.id }}/delete" method="POST">
+                    <button type="submit" class="btn btn-secondary px-5">Yes</button>
+                </form>
+                <button type="button" class="btn btn-warning px-5" data-dismiss="modal">No</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
 
 
 <div class="body-shadow"></div>

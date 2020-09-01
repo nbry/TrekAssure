@@ -31,7 +31,7 @@
 }
 
 .account-settings {
-    max-width: 700px;
+    max-width: 850px;
 }
 
 .body-shadow {
@@ -75,7 +75,7 @@
     color: white;
 }
 
-#radius, .m-search {
+#radius, .m-search, input.form-control {
     padding: 6px 35px 6px 15px;
     height: 50px;
 }

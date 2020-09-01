@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}Pamphlets{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="account-settings mx-auto">
+        <h2 class="display-4 text-center">My Search History</h2>
+
+        {% if user.searches | length == 0%}
+        <hr>
+        <p class="lead text-center">Your search history is empty</p>
+
+        {% else %}
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">Date Searched</th>
+                    <th scope="col">Search</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for search in user.searches %}
+                <tr>
+                    <td>{{ search.date_created }}</td>
+                    <td>{{ search.place }} - {{ search.radius }} miles</a></td>
+                </tr>
+
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <button type="button" class="btn btn-danger mb-5" data-toggle="modal" data-target="#clearSearchHistory">
+            Clear Search History
+        </button>
+
+        {% endif %}
+        <div class="d-flex justify-content-center mt-3">
+            <a href="/users/{{user.id}}">(Back To Account Settings)</a>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="clearSearchHistory" tabindex="-1" role="dialog" aria-labelledby="clearSearchHistoryTitle"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Clear Search History</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="lead p4">Are you sure you want to delete your entire search history?</p>
+            </div>
+            <div class="modal-footer">
+                <form action="/users/{{ user.id }}/history/delete" method="POST">
+                    <button type="submit" class="btn btn-secondary px-5">Yes</button>
+                </form>
+                <button type="button" class="btn btn-warning px-5" data-dismiss="modal">No</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="body-shadow"></div>
+
+
+{% endblock %}

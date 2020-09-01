@@ -22,7 +22,10 @@ class User(db.Model):
     username = db.Column(db.Text, nullable=False, unique=True)
     password = db.Column(db.Text, nullable=False)
     email = db.Column(db.Text, nullable=False, unique=True, default=None)
-    address = db.Column(db.Text, default="None")
+    address = db.Column(db.Text, default="")
+
+    searches = db.relationship("TrailsSearch")
+    pamphlets = db.relationship("SecuredHikePamphlet")
 
     @classmethod
     def register(cls, username, pwd, email, address):
@@ -64,13 +67,18 @@ class TrailsSearch(db.Model):
     __tablename__ = "searches"
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    user_id = db.Column(db.Integer, db.ForeignKey(
-        "users.id", ondelete="cascade"), nullable=False)
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey("users.id", ondelete="cascade"),
+        nullable=False)
+
     place = db.Column(db.Text)
     radius = db.Column(db.Integer)
     data = db.Column(db.JSON)
+    date_created = db.Column(
+        db.DateTime, nullable=False, default=datetime.utcnow())
 
-    user = db.relationship("User", backref="searches")
+    user = db.relationship("User")
 
 
 class SecuredHikePamphlet(db.Model):
@@ -78,12 +86,16 @@ class SecuredHikePamphlet(db.Model):
     __tablename__ = "pamphlets"
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    user_id = db.Column(db.Integer, db.ForeignKey(
-        "users.id", ondelete="cascade"), nullable=False)
+
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey("users.id", ondelete="cascade"),
+        nullable=False)
+
     home_destination = db.Column(db.Text, nullable=False)
     trail_id = db.Column(db.Integer, nullable=False)
     data = db.Column(db.JSON)
     date_created = db.Column(
         db.DateTime, nullable=False, default=datetime.utcnow())
 
-    user = db.relationship("User", backref="pamphlets")
+    user = db.relationship("User")

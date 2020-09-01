@@ -4,48 +4,122 @@
 
 {% block content %}
 <div class="container">
+    <a href="#" class="list-group-item list-group-item-action mt-5" data-toggle="modal"
+        data-target="#modal-{{result.id}}">
+        <div class="d-flex w-100 justify-content-between">
+            <h5 class="mb-1">{{result.name}}</h5>
+            <small>{{result.difficulty[0]}}</small>
+        </div>
+        <p class="mb-1">{{result.summary}}</p>
+        <small>Rating: {{result.stars}} out of 5 ({{result.starVotes}})</small>
+    </a>
 
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header text-center py-1">
-                <h5 class="modal-title" id="ModalLabel">{{result.name}}</h5>
-            </div>
-            <div class="modal-body d-flex">
-                <div class="row">
-                    <div class="col-7">
-                        <img src="{{result.imgMedium}}" class="rounded img-fluid" alt="...">
-                    </div>
-                    <div class="col-5">
-                        <blockquote class="blockquote font-italic">
-                            <p class="mb-0">{{result.summary}}</p>
-                        </blockquote>
-                        <hr>
-                        <ul class="ml-0 p-1">
-                            <li>{{result.location}}</li>
-                            <li>{{result.length}} miles</li>
-                            <li>Difficulty: {{result.difficulty[0]}}</li>
-                            <li>
-                                <small>
-                                    <a target="_blank"
-                                        href="https://www.hikingproject.com/trail/{{result.id}}/{{result.name}}">
-                                        (...more info about this trail)
-                                    </a>
-                                </small>
-                            </li>
-                            <ul>
+    <div class="modal fade" id="modal-{{result.id}}" tabindex="-1" aria-labelledby="ModalLabel-{{result.id}}"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header text-center py-1">
+                    <h5 class="modal-title" id="ModalLabel-{{result.id}}">{{result.name}}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div id="info-modal-target-{{result.id}}" data-target-id="{{result.id}}" class=" modal-body container">
+                    <div class="trail-modal-info row">
+                        <div class="col-7">
+                            <img src="{{result.imgMedium}}" class="rounded img-fluid" alt="...">
+                        </div>
 
+                        <div class="col-5">
+                            <blockquote class="blockquote font-italic">
+                                <p class="mb-0">{{result.summary}}</p>
+                            </blockquote>
+                            <hr>
+                            <ul class="ml-0 p-1">
+                                <li>{{result.location}}</li>
+                                <li>{{result.length}} miles</li>
+                                <li>Difficulty: {{result.difficulty[0]}}</li>
+                                <li>
+                                    <small>
+                                        <a target="_blank"
+                                            href="https://www.hikingproject.com/trail/{{result.id}}/{{result.name}}">
+                                            (...more info about this trail)
+                                        </a>
+                                    </small>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
+                <div class="modal-footer justify-content-center trail-modal-info">
+                    <p class="lead mr-3">Is this your hike?</p>
+                    <a id="{{result.id}}" type="button" class="open-secure btn btn-lg btn-success mr-3">Yes</a>
+                    <button type="button" class="btn btn-lg btn-danger" data-dismiss="modal">No</button>
+                </div>
             </div>
-            <div class="modal-footer justify-content-center">
-                <p class="lead mr-5">Is this your hike?</p>
-                <a href="/trails/{{result.id}}/secure" class="btn btn-success">Yes</a>
-                <a href="/trails/search" class="btn btn-danger">No</a>
-            </div>
+        </div>
+    </div>
+
+</div>
+</div>
+
+<div id="secure-form" class="secure-form hidden row ">
+    <div class="col">
+        <div class="row justify-content-center">
+            <h2>Your TrekAssure Pamphlet</h2>
+            <p class="px-5 text-justify">
+                TrekAssure is designed to secure your journey back home. An "after-the-hike" pamphlet
+                with static directions from the trail to your home (or whatever destination you specify)
+                will be generated. You will also be provided a set of directions from the trail
+                to the nearest gas station, pharmacy, hospital, and police station.
+            </p>
+            <p class="px-5">
+                Below, specify a home address or destination address for wherever you'll be going
+                after your hiking adventure.
+            </p>
+            <p>
+                <i class="fas fa-hiking fa-3x"></i>
+                <span id="secure-loading" class="mx-4">
+                    <i class="fas fa-mountain fa-3x"></i>
+                </span>
+                <i class="fas fa-car fa-3x"></i>
+            </p>
+        </div>
+        <hr>
+        <div class="row justify-content-center text-align-center">
+            <form id="secure-form-target" class="form-group col" method="POST">
+                <div class="form-group px-3 row">
+                    <div class="col">
+                        {{ form_s.hidden_tag() }}
+                        {% for field in form_s if field.widget.input_type != 'hidden' %}
+                        {{ field.label(class="text-align-left")}}
+
+                        {% if g.user.address != "" %}
+                        {{ field(class_="form-control m-search", value=g.user.address, placeholder="Home Address") }}
+
+                        {% else %}
+                        {{ field(class_="form-control m-search", placeholder="Home Address") }}
+                        {% endif %}
+
+                        {% for error in field.errors %}
+                        <span class="form-text text-danger">{{ error }}</span>
+                        {% endfor %}
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col ml-3">
+                        <button id="secure-form-btn" type="submit" class="btn btn-lg btn-block btn-success mt-1">
+                            Get Pamphlet!
+                        </button>
+                    </div>
+                    <div class="col mr-3">
+                        <a class="close-secure btn btn-lg btn-block mt-1 btn-warning">Go Back</a>
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
 </div>
 
-
-
-{% endblock %}
+s{% endblock %}

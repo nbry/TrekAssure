@@ -165,7 +165,10 @@ def show_search_results():
     form_t = TrailSearchForm()
     form_s = SecureHikeForm()
     if SEARCH_ID in session:
-        return render_template("/trail/search_form.html", form_t=form_t, form_s=form_s, results=g.search.data)
+        if g.search:
+            return render_template("/trail/search_form.html", form_t=form_t, form_s=form_s, results=g.search.data)
+        else:
+            return render_template("/trail/search_form.html", form_t=form_t, form_s=form_s, results=None)
 
     else:
         return render_template("/trail/search_form.html", form_t=form_t, form_s=form_s, results=None)
@@ -174,7 +177,6 @@ def show_search_results():
 @app.route('/trails/<int:trail_id>')
 def show_trail(trail_id):
     """ Render a page that shows detail about a trail, should the user manually search by id.
-    Also serves as the default route if user tampers with user/{id}/pamphlets URL.
     This route is not an explicit feature of TrekAssure. It's more of a quality of life consideration """
     if not g.user:
         flash("Please log in first", "danger")
@@ -183,8 +185,9 @@ def show_trail(trail_id):
     try:
         trail = get_trail(h_key, trail_id)
         trail['difficulty'] = rate_difficulty(trail['difficulty'])
+        form_s = SecureHikeForm()
 
-        return render_template('/trail/trail_info.html', result=trail)
+        return render_template('/trail/trail_info.html', result=trail, form_s=form_s)
 
     except:
         flash("Trail not found", "danger")
@@ -229,7 +232,7 @@ def secure_hike(trail_id):
 
 
 # *****************************
-# USER PAMPHLET ROUTE
+# USER PAMPHLET ROUTES
 # *****************************
 
 @app.route('/users/<int:user_id>/pamphlets/<int:pamphlet_id>')
@@ -292,13 +295,68 @@ def send_pamphlet_email(user_id, pamphlet_id):
 
 @app.route('/users/<int:user_id>/pamphlets')
 def redirect_to_account_info(user_id):
-    """ Pamphlets are shown on user account info. Redirect to appropriate page """
+    """ Show user all pamphlets they created """
 
     if not g.user:
         flash("Please log in first", "danger")
         return redirect('/login')
 
-    return redirect(f'/users/{user_id}')
+    if user_id != g.user.id:
+        flash("Not authorized to view that page", "warning")
+        return redirect(f"/users/{g.user.id}")
+
+    user = User.query.get(user_id)
+
+    return render_template("/user/pamphlets.html", user=user)
+
+
+@app.route('/users/<int:user_id>/pamphlets/<int:pamphlet_id>/delete')
+def delete_pamphlet(user_id, pamphlet_id):
+    """ Delete a single pamphlet """
+    if not g.user:
+        flash("Please log in first", "danger")
+        return redirect('/login')
+
+    pamphlet = SecuredHikePamphlet.query.get(pamphlet_id)
+    try:
+        db.session.delete(pamphlet)
+        db.session.commit()
+
+        flash("Deleted!", "success")
+        return redirect(f'/users/{user_id}/pamphlets')
+
+    except:
+        flash("Something went wrong", "danger")
+        return redirect(f'/users/{user_id}/pamphlets')
+
+
+@app.route('/users/<int:user_id>/pamphlets/delete', methods=["POST"])
+def delete_all_pamphlets(user_id):
+    """ Delete All Pamphlets """
+
+    if not g.user:
+        flash("Please log in first", "danger")
+        return redirect('/login')
+
+    if user_id != g.user.id:
+        flash("Not authorized to view that page", "warning")
+        return redirect(f"/users/{g.user.id}")
+
+    user_pamphlets = db.session.query(
+        SecuredHikePamphlet).filter_by(user_id=user_id).all()
+
+    try:
+        for pamphlet in user_pamphlets:
+            db.session.delete(pamphlet)
+            db.session.commit()
+
+        flash("Deleted Everything!", "success")
+        return redirect(f'/users/{user_id}/pamphlets')
+
+    except:
+        flash("Something went wrong", "danger")
+        return redirect(f'/users/{user_id}/pamphlets')
+
 
 # *****************************
 # USER ACCOUNT ROUTES
@@ -314,7 +372,7 @@ def show_user_profile(user_id):
 
     if user_id != g.user.id:
         flash("Not authorized to view that page", "warning")
-        return redirect("/trails/search")
+        return redirect(f"/users/{g.user.id}")
 
     user_info = User.query.get(g.user.id)
     form = UserSignupForm()
@@ -335,7 +393,7 @@ def update_user_settings(user_id):
 
     if user_id != g.user.id:
         flash("Not authorized to view that page", "warning")
-        return redirect("/trails/search")
+        return redirect(f"/users/{g.user.id}")
 
     form = UserSignupForm()
 
@@ -368,6 +426,81 @@ def update_user_settings(user_id):
     else:
         for error in form.errors:
             flash(form.errors[error][0], "danger")
+        return redirect(f'/users/{user_id}')
+
+
+@app.route('/users/<int:user_id>/history')
+def view_search_history(user_id):
+    """ View user search_history """
+    if not g.user:
+        flash("Please log in first", "danger")
+        return redirect('/login')
+
+    if user_id != g.user.id:
+        flash("Not authorized to view that page", "warning")
+        return redirect(f"/users/{g.user.id}")
+
+    user = User.query.get(user_id)
+    return render_template("/user/search-his.html", user=user)
+
+
+@app.route('/users/<int:user_id>/history/delete', methods=["POST"])
+def delete_search_history(user_id):
+    """ Delete user search history """
+    if not g.user:
+        flash("Please log in first", "danger")
+        return redirect('/login')
+
+    if user_id != g.user.id:
+        flash("Not authorized to view that page", "warning")
+        return redirect(f"/users/{g.user.id}")
+
+    search_history = db.session.query(
+        TrailsSearch).filter_by(user_id=user_id).all()
+
+    try:
+        for search in search_history:
+            db.session.delete(search)
+            db.session.commit()
+
+        flash("Deleted History!", "success")
+        return redirect(f'/users/{user_id}/history')
+
+    except:
+        flash("Something went wrong", "danger")
+        return redirect(f'/users/{user_id}/history')
+
+
+@app.route("/users/<int:user_id>/delete", methods=['POST'])
+def delete_user(user_id):
+    """ Delete a user """
+    if not g.user:
+        flash("Please log in first", "danger")
+        return redirect('/login')
+
+    if user_id != g.user.id:
+        flash("Not authorized to view that page", "warning")
+        return redirect(f"/users/{g.user.id}")
+
+    user = db.session.query(User).filter_by(id=user_id).first()
+    searches = db.session.query(TrailsSearch).filter_by(user_id=user_id).all()
+    pamphlets = db.session.query(
+        SecuredHikePamphlet).filter_by(user_id=user_id).all()
+
+    try:
+        for search in searches:
+            db.session.delete(search)
+        for pamphlet in pamphlets:
+            db.session.delete(pamphlet)
+        db.session.delete(user)
+        db.session.commit()
+
+        do_logout()
+        flash("Deleted Account!", "success")
+        return redirect('/')
+
+    except:
+        flash("Something went wrong", "danger")
         return redirect(f'/users/{user_id}')
 
 

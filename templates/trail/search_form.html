@@ -163,7 +163,14 @@
                             {{ form_s.hidden_tag() }}
                             {% for field in form_s if field.widget.input_type != 'hidden' %}
                             {{ field.label(class="text-align-left")}}
+
+                            {% if g.user.address != "" %}
+                            {{ field(class_="form-control m-search", value=g.user.address, placeholder="Home Address") }}
+
+                            {% else %}
                             {{ field(class_="form-control m-search", placeholder="Home Address") }}
+                            {% endif %}
+
                             {% for error in field.errors %}
                             <span class="form-text text-danger">{{ error }}</span>
                             {% endfor %}

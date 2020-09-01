@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}Pamphlets{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="account-settings mx-auto">
+        <h2 class="display-4 text-center">My Pamphlets</h2>
+
+        <p class="m-4 text-center">Tip: TrekAssure is most reliable when pamphlet is up to date</p>
+
+        {% if user.pamphlets | length == 0%}
+        <hr>
+        <p class="lead text-center">You have not created any pamphlets</p>
+
+        {% else %}
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Date Created</th>
+                    <th scope="col">Trail ID</th>
+                    <th scope="col">View</th>
+                    <th scope="col">Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for pamphlet in user.pamphlets %}
+
+                <tr>
+                    <th scope="row"> {{ pamphlet.id }}</th>
+                    <td>{{ pamphlet.date_created }}</td>
+                    <td><a href="/trails/{{ pamphlet.trail_id }}">{{ pamphlet.trail_id }}</a></td>
+                    <td><a href="/users/{{ user.id }}/pamphlets/{{ pamphlet.id }}">Pamphlet</a></td>
+                    <td><a href="/users/{{ user.id }}/pamphlets/{{pamphlet.id}}/delete">Delete</a></td>
+                </tr>
+
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <button type="button" class="btn btn-danger mb-5" data-toggle="modal" data-target="#clearPamphlets">
+            Clear All Pamphlets
+        </button>
+
+        {% endif %}
+
+        <div class="d-flex justify-content-center mt-3">
+            <a href="/users/{{user.id}}">(Back To Account Settings)</a>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="clearPamphlets" tabindex="-1" role="dialog" aria-labelledby="clearPamphletsTitle"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Clear All Pamphlets</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="lead p4">Are you sure you want to delete all your pamphlets?</p>
+            </div>
+            <div class="modal-footer">
+                <form action="/users/{{ user.id }}/pamphlets/delete" method="POST">
+                    <button type="submit" class="btn btn-secondary px-5">Yes</button>
+                </form>
+                <button type="button" class="btn btn-warning px-5" data-dismiss="modal">No</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="body-shadow"></div>
+
+
+{% endblock %}
