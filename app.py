@@ -8,7 +8,7 @@ from email_validator import validate_email, EmailNotValidError
 
 from forms import TrailSearchForm, UserSignupForm, LoginForm, SecureHikeForm, Forgot
 from models import db, connect_db, User, TrailsSearch, SecuredHikePamphlet
-from secrets import m_key, h_key, t_pass
+# from secrets import m_key, h_key, t_pass
 from functions import (search_for_trails, get_trail, get_conditions,
                        get_geo_info, rate_difficulty, get_directions, search_for_nearest,
                        secure_trip)
@@ -38,6 +38,10 @@ app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 app.config['SECRET_KEY'] = os.environ.get(
     'SECRET_KEY', "EIJALWIEJAEFIJ320F23F8SEF209238FDI")
 toolbar = DebugToolbarExtension(app)
+
+m_key = os.environ.get('m_key', None)
+h_key = os.environ.get('h_key', None)
+t_pass = os.environ.get('t_pass', None)
 
 connect_db(app)
 
