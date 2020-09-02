@@ -8,8 +8,8 @@
 
 {% block content %}
 <div class="search-bg s-bg1">
-    <div id="trail-form" class="container py-4 px-5 hidden animate-loading">
-        <h1 class="text-center display-1">TrekAssure</h1>
+    <div id="trail-form" class="container py-4 hidden animate-loading">
+        <h1 id="t-banner" class="text-center display-1">TrekAssure</h1>
         <p class="lead text-center hidden animate-med">Peace of mind for the journey back home</p>
         {% if g.user %}
         <div class="container-fluid justify-content-center">
@@ -19,14 +19,17 @@
         </div>
         {% else %}
 
-        <div class="row mt-4">
-            <div class="col d-flex justify-content-center">
-                <a href="/signup" class="btn btn-info btn-lg btn-block hidden animate-med ml-5 mr-3">Sign Up</a>
-            </div>
-            <div class="col d-flex justify-content-center">
-                <a href="/login" class="btn btn-success btn-lg btn-block hidden animate-med mr-5 mr-3">Login</a>
+        <div class="row justify-content-center px-5">
+            <div class="col d-flex ">
+                <a href="/signup" class="btn btn-info btn-lg btn-block hidden animate-med mx-5">Sign Up</a>
             </div>
         </div>
+        <div class="row justify-content-center px-5">
+            <div class="col d-flex ">
+                <a href="/login" class="btn btn-success btn-lg btn-block hidden animate-med mx-5 mt-4">Login</a>
+            </div>
+        </div>
+
 
         {% endif %}
     </div>
