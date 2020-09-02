@@ -7,7 +7,7 @@
 {% block title %}Search Trail{% endblock %}
 
 {% block content %}
-<div class="search-bg">
+<div class="search-bg s-bg1">
     <div id="trail-form" class="container py-4 px-5 hidden animate-loading">
         <h1 class="text-center display-2">Find Your Trail</h1>
 
@@ -20,9 +20,9 @@
                     <p>
                         {{ field.label(for="place-search-input", class="text-align-left")}}
                         <a id="search-help" tabindex="0" role="button" display="hidden" data-toggle="popover"
-                            data-trigger="focus" title="Find Your Chosen Trail" data-placement="right" data-content="There are thousands of trails in the US. 
-                            Enter the park name or zip code of the trail you chose, 
-                            and we'll do our best to pinpoint it!">
+                            data-trigger="focus" title="Get a List of Trails" data-placement="right" data-content="There are thousands of trails in the US. 
+                            Enter the park name or the zip code of the trail you chose to get a list of trails within the area, and filter for your trail. 
+                            If it's not there, try increasing the search radius">
                             <i class="far fa-question-circle"></i>
                         </a>
                         {{ field(id="place-search-input", class_='form-control m-search', placeholder="Park Name, City, Zip Code") }}
@@ -48,15 +48,53 @@
             <button class="btn btn-block btn-lg btn-success mt-2" type="submit">Get Trails</button>
         </form>
     </div>
-    <div id="loading" class="text-center mt-2"></div>
+    <div id="loading" class="text-center pb-1"></div>
 </div>
 
 
-<div class="spacer"></div>
+<div id="quotes-box" class="p-3">
+    <blockquote class="blockquote text-align-center d-flex justify-content-center">
+
+        <div data-quote="1" class="quote q1 qnow">
+            <p class="mb-1 h1 text-center">"There <span class="strikethrough">and Back Again"</span></p>
+            <footer class="blockquote-footer">A Hobbit's Tale by Bil... wait, isn't the rest of it important?<cite
+                    title="Source Title"></cite></footer>
+        </div>
+
+        <div data-quote="2" class="quote q2 hidden">
+            <p class="mb-1 lead text-center">We highly recommend HikingProject.com or All Trails for discovering your next
+                hike.
+            </p>
+            <p class="mb-1 lead hidden text-center">In fact, TrekAssure trails are populated by HikingProject's API!</p>
+        </div>
+
+        <div data-quote="3" class="quote q3 hidden">
+            <p class="mb-1 lead text-center">You can download your "After-The-Hike" Pamphlet as a text file</p>
+            <p class="mb-1 lead text-center">or email a copy to yourself!</p>
+        </div>
+
+
+        <div data-quote="4" class="quote q4 hidden ">
+            <p class="mb-1 lead text-center">You can save an address under account settings</p>
+        </div>
+
+        <div data-quote="5" class="quote q5 hidden">
+            <p class="mb-1 lead text-center">You can view the pamphlets you made under account settings.</p>
+            <p class="mb-1 lead text-center">Click your username on the top right corner!</p>
+        </div>
+
+        <div data-quote="6" class="quote q6 hidden">
+            <p class="mb-1 h4">{overusedJohnMuirQuoteAboutMountains.innerText()}</p>
+            <footer class="blockquote-footer">quoted.length > 9000 //True<cite title="Source Title"></cite></footer>
+        </div>
+
+    </blockquote>
+</div>
 
 
 
 {% if results %}
+<hr class="spacer p-0 m-0">
 <div id="results-container" class="container">
 
     <h1 class="display-3 text-center">Trails</h1>
@@ -167,9 +205,10 @@
 
 {% else %}
 <!-- hidden empty table -->
+<hr class="spacer p-0 m-0">
 <div id="results-container" class="container hidden">
 
-    <h1 class="display-3 text-center">Search Results</h1>
+    <h1 class="display-3 text-center">Trails</h1>
     <p id="results-number" class="text-center"></p>
 
     <div class="table-container mb-5">

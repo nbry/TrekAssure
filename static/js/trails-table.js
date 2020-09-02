@@ -1,11 +1,8 @@
 $(document).ready(function () {
-    $('#trails-table').DataTable();
+    $('#trails-table').DataTable({
+        "lengthMenu": [[-1, 10, 25, 50], ["All", 10, 25, 50]],
+        "autoWidth": false
+    });
 });
 
-$('#trails-table').dataTable({
-    "lengthMenu": [10, 20, 30, 40, 50, 75, 100]
-});
 
-$('#trails-table').dataTable({
-    "autoWidth": False
-})

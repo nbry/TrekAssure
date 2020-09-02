@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}Forgot{% endblock %}
+
+{% block content %}
+<div class="container d-flex justify-content-center">
+    <div class="register-form hidden animate-loading">
+        {% if p_forg %}
+        <h1 class="h1">Reset Password</h1>
+        <p class="lead">Enter your account email address. We'll send you a link to reset your password</p>
+
+
+        {% elif u_forg %}
+        <h1 class="h1">Recover Username</h1>
+        <p class="lead">Enter your account email address. We'll email you your username! </p>
+        {% endif %}
+
+        <form method="POST">
+            {{ form.hidden_tag() }}
+            {% for field in form if field.widget.input_type != 'hidden' %}
+            <div class="form-group">
+                {{ field.label }}
+                {{ field(class_='form-control') }}
+                {% for error in field.errors %}
+                <small class="form-text text-danger">
+                    {{error}}
+                </small>
+                {% endfor %}
+            </div>
+            {% endfor %}
+            <button class="btn btn-success btn-lg btn-block" type="submit">Send Email</button>
+        </form>
+
+        <p class="mt-3"><a href="/login">Back</a></p>
+    </div>
+</div>
+
+<div class="body-shadow"></div>
+
+
+{% endblock %}

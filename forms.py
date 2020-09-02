@@ -21,9 +21,9 @@ class SecureHikeForm(FlaskForm):
 
 class UserSignupForm(FlaskForm):
     username = StringField("Username", validators=[InputRequired(), Length(
-        min=6, max=15, message="Username must be 6-15 characters long")])
+        min=5, max=15, message="Username must be 5-15 characters long")])
     password = PasswordField("Password", validators=[
-                             InputRequired(), Length(min=6)])
+                             InputRequired(), Length(min=5, message="Password must be 5 characters or longer")])
     email = StringField("Email", validators=[
                         Email("Please enter a valid email address")])
     address = StringField("Home Address (optional)")
@@ -34,3 +34,8 @@ class UserSignupForm(FlaskForm):
 class LoginForm(FlaskForm):
     username = StringField("Username", validators=[InputRequired()])
     password = PasswordField("Password", validators=[InputRequired()])
+
+
+class Forgot(FlaskForm):
+    email = StringField("Email", validators=[
+                        Email("Please enter a valid email address")])

@@ -10,9 +10,17 @@
     height: 50px;
 }
 
+#sheep-banner {
+    text-shadow: 1px 1px 1px black;
+}
+
 /* REGISTRATION AND ACCOUNT SETTINGS*/
 
 /* ***************************** */
+
+.strikethrough {
+    text-decoration: line-through;
+}
 
 .register-form, .account-settings {
     position: relative;
@@ -60,13 +68,30 @@
 /* ***************************** */
 
 .search-bg {
-    background-image: url('/static/images/trees-paint.jpg');
     background-repeat: no-repeat;
     background-size: cover;
     background-position: right;
     position: relative;
     height: 500px;
     padding-top: 50px;
+}
+
+.s-bg1 {
+    background-image: url('/static/images/trees-paint.jpg');
+}
+
+.s-bg2 {
+    background-image: url('/static/images/sheep-paint.jpg');
+}
+
+#quotes-box {
+    height: 120px;
+}
+
+@media (max-width: 600px) {
+    #quotes-box {
+        display: none;
+    }
 }
 
 .secure-form-scroller .fas:hover {
@@ -80,6 +105,7 @@
 
 #trail-form {
     background: rgba(0, 0, 0, 0.767);
+    min-height: 350px;
     max-width: 750px;
     width: 100%;
     color: white;

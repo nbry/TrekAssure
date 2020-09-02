@@ -6,7 +6,7 @@ from sqlalchemy.exc import IntegrityError
 from flask_mail import Mail, Message
 from email_validator import validate_email, EmailNotValidError
 
-from forms import TrailSearchForm, UserSignupForm, LoginForm, SecureHikeForm
+from forms import TrailSearchForm, UserSignupForm, LoginForm, SecureHikeForm, Forgot
 from models import db, connect_db, User, TrailsSearch, SecuredHikePamphlet
 from secrets import m_key, h_key, t_pass
 from functions import (search_for_trails, get_trail, get_conditions,
@@ -86,7 +86,7 @@ def do_logout():
 @app.route('/')
 def home_page():
     """ Show Home Page """
-    return render_template("extends.html")
+    return render_template("home.html")
 
 # *****************************
 # TREKASSURE "TRAIL SEARCH" DATA REQUEST HANDLING
@@ -145,16 +145,6 @@ def store_trails():
 # "TRAIL SEARCH" ROUTES
 # *****************************
 
-@app.route('/trails/refresh')
-def refresh_trails():
-    """ User cliked 'Find Your Trail' Button. Clear previous search results """
-
-    if SEARCH_ID in session:
-        del session[SEARCH_ID]
-
-    return redirect('/trails/search')
-
-
 @app.route('/trails/search')
 def show_search_results():
     """ Render a form that shows "Find Your Trail" form """
@@ -164,6 +154,7 @@ def show_search_results():
 
     form_t = TrailSearchForm()
     form_s = SecureHikeForm()
+
     if SEARCH_ID in session:
         if g.search:
             return render_template("/trail/search_form.html", form_t=form_t, form_s=form_s, results=g.search.data)
@@ -402,8 +393,11 @@ def update_user_settings(user_id):
 
     if form.validate_on_submit():
         try:
-            user = User.query.get(user_id)
             data = form.data
+            user = User.query.get(user_id)
+            if not User.authenticate(user.username, data['password']):
+                flash("Incorrect Password", "warning")
+                return redirect(f'/users/{user_id}')
 
             user.username = data['username']
             user.email = data['email']
@@ -591,9 +585,62 @@ def logout_user():
     return redirect('/')
 
 
+# TO BE IMPLEMENTED:
+# @app.route('/forgotpassword', methods=['GET', 'POST'])
+# def forgot_password():
+#     """ Render forogot form. If email is valid and tied to an existing account, user will be sent an email """
+
+#     form = Forgot()
+#     if form.validate_on_submit():
+#         email = form.email.data
+
+#         try:
+#             valid = validate_email(email, allow_smtputf8=False)
+
+#         except:
+#             return "Invalid Email Address"
+
+#     else:
+#         return render_template("/user/forgot.html", form=form, p_forg=True)
+
+
+# @app.route('/forgotusername', methods=['GET', 'POST'])
+# def forgot_username():
+#     """ Render forgot form. If email is valid and tied to an existing account, user will be sent email """
+
+#     form = Forgot()
+#     if form.validate_on_submit():
+#         email = form.email.data
+#         try:
+#             valid = validate_email(email, allow_smtputf8=False)
+
+#             user = db.session.query(User).filter_by(email=email).first()
+
+#             if not user:
+#                 raise
+
+#             mail = Mail(app)
+#             msg = Message("Recover Username", sender="TrekAssure@gmail.com",
+#                           recipients=[email])
+
+#             msg.body = f"Your username is: {user.username}"
+#             mail.send(msg)
+
+#             flash("Sent Email!", "success")
+#             return redirect('/')
+
+#         except:
+#             flash("Invalid Email", "warning")
+#             return redirect('/')
+
+#     else:
+#         return render_template("/user/forgot.html", form=form, u_forg=True)
+
+
 # *****************************
 # M_KEY FOR FRONT END ROUTE
 # *****************************
+
 
 @app.route('/key')
 def provide_key():

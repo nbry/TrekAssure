@@ -35,7 +35,7 @@ $(async function () {
   };
 
   //Item Loading Animations (class must be hidden)
-  if ($(".animate-loading")) {
+  if ($(".animate-loading")[0]) {
     setTimeout(function () {
       $(".animate-loading").fadeIn(650);
     }, 150);
@@ -46,20 +46,28 @@ $(async function () {
   };
 
   // Secure form spinner
-  if ($("#secure-form-btn")) {
+  if ($("#secure-form-btn")[0]) {
     $("#secure-form").on("submit", function () {
       $("#secure-loading").children().remove();
       $("#secure-loading").append($(`<i class="fas fa-compass fa-3x fa-spin"></i>`));
     })
   };
 
-  // Secure form scroller
-  if ($(".secure-form-scroller")) {
-    $(".secure-form-scroller").on("click", function () {
-      $([document.documentElement, document.body]).animate({
-        scrollTop: $("body").offset().top
-      }, 300);
-    })
+  // Quote Box animator
+  if ($("#quote-box")[0]) {
+    $(".qnow").show();
+
+    setInterval(function () {
+      const currentQuote = parseInt($(".qnow")[0].dataset.quote)
+
+      if (currentQuote < $('.quote').length) {
+        $(".qnow").fadeOut(500).removeClass("qnow");
+        $(`.q${currentQuote + 1}`).delay(500).fadeIn(300).addClass("qnow")
+      } else {
+        $(".qnow").fadeOut(500).removeClass("qnow");
+        $(`.q1`).delay(500).fadeIn(300).addClass("qnow")
+      }
+    }, 10000)
   }
 
   applyOpenCloseSecureForm();
@@ -71,7 +79,7 @@ $(async function () {
 
   $searchTrailForm.on("submit", async function (event) {
     event.preventDefault();
-    $('#loading').append($(`<i class="far fa-compass fa-5x fa-spin mt-3 light-icon"></i>`))
+    $('#loading').append($(`<i class="far fa-compass fa-4x fa-spin mt-3 light-icon"></i>`))
     $('#results-container').fadeOut();
 
     // Ensure Secure Form Modal is moved elsewhere and hidden
@@ -80,6 +88,7 @@ $(async function () {
     // TREKASSURE API call to get results and append:
     const results = await SearchTrailList.getTrails($searchPlace.val(), $radius.val());
 
+    // Populate Data Table
     const table = $('#trails-table').DataTable();
     table.rows().remove().draw();
 
@@ -97,15 +106,13 @@ $(async function () {
       $('.table-container').show();
     };
 
-
     applyOpenCloseSecureForm();
-    applyMapquestSearchSDK();
 
     $('#loading').children().remove();
     $('#results-container').fadeIn(800);
     $([document.documentElement, document.body]).animate({
       scrollTop: $(".spacer").offset().top
-    }, 500);
+    }, 800);
 
     // TREKASSURE API call to store search result to database
     const search = await SearchTrailList.storeTrailSearch(results.data, $searchPlace.val(), $radius.val());
@@ -117,17 +124,17 @@ $(async function () {
   // *****************
 
   function applyOpenCloseSecureForm() {
-    if ($('.open-secure')) {
+    if ($('.open-secure')[0]) {
       $('.open-secure').on("click", function (e) {
         $('.trail-modal-info').hide();
         $('#secure-form').appendTo($(`#info-modal-target-${e.currentTarget.id}`))
-        $('#secure-form').addClass('d-flex').fadeIn();
+        $('#secure-form').fadeIn();
         $('#secure-form-target').attr('action', `/trails/${e.currentTarget.id}/secure`);
       });
 
       $('.close-secure').on("click", function () {
         $('.trail-modal-info').fadeIn();
-        $('#secure-form').hide().removeClass('d-flex');
+        $('#secure-form').hide();
       });
 
       $('.modal').on('hide.bs.modal', function (e) {
@@ -140,7 +147,7 @@ $(async function () {
   };
 
   function applyMapquestSearchSDK(m_key) {
-    if ($('.m-search')) {
+    if ($('.m-search')[0]) {
       for (let search of $('.m-search')) {
         placeSearch({
           key: m_key,
@@ -179,7 +186,6 @@ $(async function () {
 
     trailModal = $(`
 
-        <div id = "trail-modals" class= "hidden" >
           <div class="modal fade" id="modal-${result.id}" tabindex="-1" aria-labelledby="ModalLabel-${result.id}"
             aria-hidden="true">
             <div class="modal-dialog modal-lg modal-dialog-centered">
@@ -226,7 +232,6 @@ $(async function () {
                   </div>
                 </div>
               </div>
-            </div>
     `)
 
     return { trailModal, trailRow }

@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block head %}
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/dataTables.bootstrap4.min.css">
+{% endblock %}
+
+{% block title %}Welcome to TrekAssure{% endblock %}
+
+{% block content %}
+<div class="search-bg s-bg1">
+    <div id="trail-form" class="container py-4 px-5 hidden animate-loading">
+        <h1 class="text-center display-1">TrekAssure</h1>
+        <p class="lead text-center hidden animate-med">Peace of mind for the journey back home</p>
+        {% if g.user %}
+        <div class="container-fluid justify-content-center">
+            <div class="row justify-content-center">
+                <a href="/trails/search" class="btn btn-success btn-lg hidden animate-med mt-3 px-5">Get Started</a>
+            </div>
+        </div>
+        {% else %}
+        <div class="container-fluid justify-content-center">
+            <div class="row justify-content-center">
+                <a href="/signup" class="btn btn-success btn-lg hidden animate-med mt-3 px-5">Sign Up</a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+</div>
+<div class="container">
+
+</div>
+
+<div class="container-fluid d-flex justify-content-center">
+    <div class="row">
+        <div class="col my-5">
+            <p class="lead">Breathtaking views, the fresh smell of pine</p class="lead">
+            <p class="lead">Being pushed to your physical and mental limits</p class="lead">
+            <p class="lead">The memories are everlasting. You bask in the glow of your accomplishment</p>
+            <p class="lead">Now you're ready to go home.</p>
+            <p class="lead">Exhaustion is now front and center. Fustration gets the better of you</p class="lead">
+            <p class="lead">You remember that the world's most beautiful places can also be the most remote.</p
+                class="lead">
+            <p class="lead">You're in the middle of nowhere... and you have no cell reception</p class="lead">
+            <p class="lead"></p>
+        </div>
+    </div>
+</div>
+
+
+<div class="search-bg s-bg2 container-fluid justify-content-center">
+</div>
+
+<div class="container p-4 mb-5">
+    <h2 class="display-4 text-center m-3">Preparation goes a long way</h2>
+    <p class="mt-4 lead text-justify">I love hiking, and it brings me immense joy that the great outdoors has never been
+        more accessible. As technology progresses, we inherit amazing tools and information that provides us with the
+        security of knowledge and the confidence to tackle any challenge. I find that there are ample resources for the
+        discovery of hiking destinations wherever you may visit. Any avid traveller can find joy at the mere prospect of
+        planning their escape to some of the most beautiful places in the world.
+    </p>
+
+    <p class="mt-4 lead text-justify">I value preparation as much as anyone, but like branches on a trail, plans can
+        can snap given enough stress. Mistakes are to be made, and unfortunately for hikers, the solutions might
+        not be so easy to research. The information may available, but what if you can't access it? I find myself with a
+        good sense of direction on the trail, but put me on the road and I immediately turn to the robotic instruction
+        of mapping software from my phone. Alas, these middle-of-nowhere destinations are notorious for being poor
+        providers of cell reception. In these situations, you realize that you really wish you had some sort of
+        direction that'll lead the way home.
+    </p>
+
+    <h4 class="display-4 text-center my-5">Have Directions On Hand</h4>
+    <p class="mt-4 lead text-justify">Negligence to prepare for the journey back home has led to more wrong
+        turns than I care to admit. I find that even I, if given just a few context clues, can gather my bearings
+        and get myself home. I created <span class="font-weight-bold">TrekAssure</span> for precisely this reason. Once
+        a trail is chosen, TrekAssure can be used to secure a set of static directions back home, and additional
+        directions to few key locations (e.g. gas station) nearest to the trail. These directions are neatly packed in
+        an "After-The-Hike" pamphlet that you can either download as a text file or email to yourself i.e. files that
+        can be accessed without a connection. Adding TrekAssure to your preparation routine before a hike and securing a
+        pamphlet can save you loads of stress for when you are at your most tired.
+    </p>
+    <p class="mt-4 lead text-justify">If at the end of your hike, you find yourself with cell reception, that's AWESOME!
+        Use it! Get home quickly and safely! However, for those times when you are deep in the mountains and you have no
+        idea where you are, you'll be glad to have a pamphlet to at least get you going in the right
+        direction. Like jumper cables, you'll spend most of the time not needing TrekAssure... until you do. What's 5
+        minutes to avoid the pain?
+    </p>
+    <small class="my-5 text-justify">TrekAssure is powered by <a target="_blank"
+            href="https://developer.mapquest.com/">MapQuest's
+            Developer API</a>
+        and all trail information is acquired from the excellent <a target="_blank"
+            href="https://www.hikingproject.com/data">Hiking
+            Project API</a>. TrekAssure is designed for the continental US. Results for international users
+        may not be optimal. This is a project created by Nathan Bryant <a
+            href="https://www.linkedin.com/in/nmwbryant/">(LinkedIn)</a>.
+    </small>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/home-page.js"></script>
+{% endblock %}

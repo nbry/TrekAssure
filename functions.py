@@ -1,24 +1,8 @@
 import requests
-from uszipcode import SearchEngine
+from random import randrange
 
 MQAPI_BASE_URL = 'http://www.mapquestapi.com'
 HPAPI_BASE_URL = 'https://www.hikingproject.com/data'
-
-
-# *****************************
-# US ZIPCODE FUNCTIONS
-# *****************************
-
-
-# def get_geo_info(zip_code):
-#     """ Using uszipcode package, get geographical info of a user-inputted
-#     zipcode. Return a dictionary of that information"""
-
-#     search = SearchEngine(simple_zipcode=True)
-#     geo_info = search.by_zipcode(f"{zip_code}")
-#     geo_info_dict = geo_info.to_dict()
-
-#     return geo_info_dict
 
 
 # *****************************
@@ -197,7 +181,7 @@ def rate_difficulty(color):
               'blueBlack', 'black', 'dblack', 'missing']
 
     ratings = [('Easy', 'No obstacles. Flat.'), ('Easy/Intermediate', 'Mostly flat and even.'), ('Intermediate', 'Uneven Terrain. Small hills'),
-               ('Int/Difficult', 'Steep sections, rocks, roots'), ('Difficult', 'Tricky terrain. Steep. Not for beginners'), ('Very Difficult', 'Hazardous. Very steep. Experts only'), (None, None)]
+               ('Somewhat Difficult', 'Steep sections, rocks, roots'), ('Strenuous/Steep', 'Tricky terrain. Steep. Not for beginners'), ('Very Difficult', 'Hazardous. Very steep. Experts only'), (None, None)]
 
     index = colors.index(color)
 
