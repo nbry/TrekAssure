@@ -54,7 +54,7 @@ $(async function () {
   };
 
   // Quote Box animator
-  if ($("#quote-box")[0]) {
+  if ($("#quotes-box")[0]) {
     $(".qnow").show();
 
     setInterval(function () {

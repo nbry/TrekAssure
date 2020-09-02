@@ -20,9 +20,10 @@
                     <p>
                         {{ field.label(for="place-search-input", class="text-align-left")}}
                         <a id="search-help" tabindex="0" role="button" display="hidden" data-toggle="popover"
-                            data-trigger="focus" title="Get a List of Trails" data-placement="right" data-content="There are thousands of trails in the US. 
-                            Enter the park name or the zip code of the trail you chose to get a list of trails within the area, and filter for your trail. 
-                            If it's not there, try increasing the search radius">
+                            data-trigger="focus" title="Get a List of Trails" data-placement="right" data-content="The first step of using TrekAssure is finding
+                            your trail. We need to search the general area of your trail (i.e. park, zipcode, or city). We'll get a list of results based on your
+                            search parameters, and then you'll be able to filter for your trail from there. If you didn't get what you're looking for,
+                            try a new place or increase the search radius!">
                             <i class="far fa-question-circle"></i>
                         </a>
                         {{ field(id="place-search-input", class_='form-control m-search', placeholder="Park Name, City, Zip Code") }}
@@ -53,7 +54,7 @@
 
 
 <div id="quotes-box" class="p-3">
-    <blockquote class="blockquote text-align-center d-flex justify-content-center">
+    <blockquote class="blockquote text-align-center d-flex justify-content-center align-items-center">
 
         <div data-quote="1" class="quote q1 qnow">
             <p class="mb-1 h1 text-center">"There <span class="strikethrough">and Back Again"</span></p>
@@ -62,10 +63,10 @@
         </div>
 
         <div data-quote="2" class="quote q2 hidden">
-            <p class="mb-1 lead text-center">We highly recommend HikingProject.com or All Trails for discovering your next
-                hike.
+            <p class="mb-1 lead text-center">We highly recommend HikingProject.com or All Trails for discovering your
+                next hike.
             </p>
-            <p class="mb-1 lead hidden text-center">In fact, TrekAssure trails are populated by HikingProject's API!</p>
+            <p class="mb-1 lead text-center">In fact, TrekAssure is powered by HikingProject's API!</p>
         </div>
 
         <div data-quote="3" class="quote q3 hidden">
@@ -75,7 +76,8 @@
 
 
         <div data-quote="4" class="quote q4 hidden ">
-            <p class="mb-1 lead text-center">You can save an address under account settings</p>
+            <p class="mb-1 h4">{overusedJohnMuirQuoteAboutMountains.innerText()}</p>
+            <footer class="blockquote-footer">quoted.length > 9000 //True<cite title="Source Title"></cite></footer>
         </div>
 
         <div data-quote="5" class="quote q5 hidden">
@@ -84,8 +86,8 @@
         </div>
 
         <div data-quote="6" class="quote q6 hidden">
-            <p class="mb-1 h4">{overusedJohnMuirQuoteAboutMountains.innerText()}</p>
-            <footer class="blockquote-footer">quoted.length > 9000 //True<cite title="Source Title"></cite></footer>
+            <p class="mb-1 lead text-center">For convenience, you can save your address</p>
+            <p class="mb-1 lead text-center">under account settings</p>
         </div>
 
     </blockquote>
