@@ -2,4 +2,4 @@ __pycache__
 /venv
 .vscode
 secrets.py
-/templates/testing.html
+

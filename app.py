@@ -15,7 +15,6 @@ from functions import (search_for_trails, get_trail, get_conditions,
 
 CURR_USER_KEY = "curr_user"
 SEARCH_ID = "SEARCH_ID"
-FILTERED_RESULTS = "FILTERED_RESULTS"
 PAMPHLET_ID = "PAMPHLET_ID"
 
 
