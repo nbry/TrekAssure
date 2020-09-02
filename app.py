@@ -16,6 +16,9 @@ from functions import (search_for_trails, get_trail, get_conditions,
 CURR_USER_KEY = "curr_user"
 SEARCH_ID = "SEARCH_ID"
 PAMPHLET_ID = "PAMPHLET_ID"
+m_key = os.environ.get('m_key', None)
+h_key = os.environ.get('h_key', None)
+t_pass = os.environ.get('t_pass', None)
 
 
 app = Flask(__name__)
@@ -38,10 +41,6 @@ app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 app.config['SECRET_KEY'] = os.environ.get(
     'SECRET_KEY', "EIJALWIEJAEFIJ320F23F8SEF209238FDI")
 toolbar = DebugToolbarExtension(app)
-
-m_key = os.environ.get('m_key', None)
-h_key = os.environ.get('h_key', None)
-t_pass = os.environ.get('t_pass', None)
 
 connect_db(app)
 
