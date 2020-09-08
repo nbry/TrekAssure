@@ -18,8 +18,8 @@ Geocoding, routing, and mapping from [Mapquest API](https://developer.mapquest.c
 
 **4. Current plans for expansion:**
 - Functionality on mobile
-- Customizable search results
-- "On route" search results 
-- User query results 
+- Customizable destination results
+- "On route" destination results 
+- User query destination results 
 - File type choice for pamphlets (pdf would be ideal)
 - "Update all stored pamphlets" functionality
