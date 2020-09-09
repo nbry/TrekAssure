@@ -56,6 +56,7 @@ def handle_g_data():
     # store user in g
     if CURR_USER_KEY in session:
         g.user = User.query.get(session[CURR_USER_KEY])
+
     else:
         g.user = None
 
@@ -154,6 +155,8 @@ def show_search_results():
         flash("Please log in first", "danger")
         return redirect('/login')
 
+    session['unlocked'] = True
+
     form_t = TrailSearchForm()
     form_s = SecureHikeForm()
 
@@ -174,6 +177,8 @@ def show_trail(trail_id):
     if not g.user:
         flash("Please log in first", "danger")
         return redirect('/login')
+
+    session['unlocked'] = True
 
     try:
         trail = get_trail(h_key, trail_id)
@@ -369,6 +374,8 @@ def show_user_profile(user_id):
     if user_id != g.user.id:
         flash("Not authorized to view that page", "warning")
         return redirect(f"/users/{g.user.id}")
+
+    session['unlocked'] = True
 
     user_info = User.query.get(g.user.id)
     form = UserSignupForm()
@@ -590,7 +597,7 @@ def logout_user():
 # TO BE IMPLEMENTED:
 # @app.route('/forgotpassword', methods=['GET', 'POST'])
 # def forgot_password():
-#     """ Render forogot form. If email is valid and tied to an existing account, user will be sent an email """
+#     """ Render forgot form. If email is valid and tied to an existing account, user will be sent an email """
 
 #     form = Forgot()
 #     if form.validate_on_submit():
@@ -643,11 +650,16 @@ def logout_user():
 # M_KEY FOR FRONT END ROUTE
 # *****************************
 
-
 @app.route('/key')
 def provide_key():
     if not g.user:
         flash("Please log in first", "danger")
         return redirect('/login')
 
-    return m_key
+    if 'unlocked' in session:
+        del session['unlocked']
+        return m_key
+
+    else:
+        flash("not authorized", "warning")
+        return redirect('/')
