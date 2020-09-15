@@ -167,7 +167,7 @@ $(async function () {
     let trailModal
 
     if (result.imgMedium === "") {
-      result.imgMedium = "/static/images/no-image.webp"
+      result.imgMedium = "/static/images/no-image.png"
     };
 
     trailRow =
