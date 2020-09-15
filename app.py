@@ -224,7 +224,7 @@ def secure_hike(trail_id):
         db.session.add(pamphlet_to_db)
         db.session.commit()
 
-        flash("Secured your hike!", "success")
+        flash("Success!", "success")
         return redirect(f'/users/{g.user.id}/pamphlets/{pamphlet_to_db.id}')
 
     else:
